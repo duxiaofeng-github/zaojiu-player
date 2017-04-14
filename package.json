@@ -1,0 +1,79 @@
+{
+  "_args": [
+    [
+      "tcplayer",
+      "/Users/johnny/zaojiu/baiding-web"
+    ]
+  ],
+  "_from": "tcplayer@latest",
+  "_id": "tcplayer@2.1.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/tcplayer",
+  "_nodeVersion": "5.11.0",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/tcplayer-2.1.0.tgz_1491555401485_0.6645581112243235"
+  },
+  "_npmUser": {
+    "email": "csdxf297951292@gmail.com",
+    "name": "297951292"
+  },
+  "_npmVersion": "3.8.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "tcplayer",
+    "raw": "tcplayer",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_shasum": "b05b50519ed943ed7381d761b89fa354650d17e3",
+  "_shrinkwrap": null,
+  "_spec": "tcplayer",
+  "_where": "/Users/johnny/zaojiu/baiding-web",
+  "author": {
+    "name": "duxiaofeng"
+  },
+  "bugs": {
+    "url": "https://github.com/duxiaofeng-github/TcPlayer/issues"
+  },
+  "dependencies": {},
+  "description": "腾讯云web播放器SDK",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "b05b50519ed943ed7381d761b89fa354650d17e3",
+    "tarball": "https://registry.npmjs.org/tcplayer/-/tcplayer-2.1.0.tgz"
+  },
+  "gitHead": "ef05215146851a11d0a2b1c6979d758589997330",
+  "homepage": "https://github.com/duxiaofeng-github/TcPlayer#readme",
+  "keywords": [
+    "腾讯云",
+    "腾讯直播",
+    "web播放器"
+  ],
+  "license": "MIT",
+  "main": "TcPlayer.js",
+  "maintainers": [
+    {
+      "email": "csdxf297951292@gmail.com",
+      "name": "297951292"
+    }
+  ],
+  "name": "tcplayer",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duxiaofeng-github/TcPlayer.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "2.1.0"
+}
