@@ -2166,9 +2166,21 @@
                                     r.type = o.MSG.Seeked
                                 } else if (t.code == "NetStream.Seek.Complete") {}
                             }
+                            if (t.code ==  "NetStream.Buffer.Empty") {
+                                this.player.loading.show();
+                            }
+                            if (t.code == "NetStream.Buffer.Full") {
+                                this.player.loading.hide();
+                            }
                             if (t.code == "NetConnection.Connect.Closed") {
                                 if (this.options.src.indexOf("rtmp://") > -1) {
-                                    if (this.playState == p.PlayStates.STOP) {} else {
+                                    if (this.playState == p.PlayStates.STOP) {
+                                        r.type = "error";
+                                        t = {
+                                            code: 1001,
+                                            reason: t.code
+                                        }
+                                    } else {
                                         if (this.player.video.switchVideo) {
                                             this.player.video.switchVideo = undefined;
                                         } else {
