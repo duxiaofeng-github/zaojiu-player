@@ -118,8 +118,8 @@
       t.prototype.switchClarity = function r(e) {
         e = e || "od";
         var t = this.currentTime(),
-          r = this.options.videoSource,
-          n = w(r.urls, e);
+            r = this.options.videoSource,
+            n = w(r.urls, e);
         this.load(n.url);
         r.curUrl = n.url;
         r.curDef = n.definition;
@@ -205,7 +205,7 @@
     function w(e, t, r) {
       var n = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : m;
       var o = "",
-        s = void 0;
+          s = void 0;
       r = r || (i.IS_MOBILE ? n.mobile : n.pc);
       for (var a = 0; a < r.length; a++) {
         o = r[a];
@@ -236,9 +236,9 @@
     function E(e) {
       var t = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : m;
       var r = void 0,
-        n = "",
-        o = e.urls,
-        s = i.IS_MOBILE ? t.mobile : t.pc;
+          n = "",
+          o = e.urls,
+          s = i.IS_MOBILE ? t.mobile : t.pc;
       for (var a = 0; a < s.length; a++) {
         n = s[a];
         if (e.isFormat(n)) {
@@ -252,8 +252,8 @@
     function M(e) {
       var t = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ["od", "hd", "sd"];
       var r = void 0,
-        n = "",
-        i = e.urls;
+          n = "",
+          i = e.urls;
       for (var o = 0; o < t.length; o++) {
         n = t[o];
         if (e.isClarity(n)) {
@@ -284,7 +284,7 @@
     var h = t.IS_ANDROID = /Android/i.test(r);
     var f = t.ANDROID_VERSION = function () {
       var e = r.match(/Android (\d+)(?:\.(\d+))?(?:\.(\d+))*/i),
-        t, n;
+          t, n;
       if (!e) {
         return null
       }
@@ -307,7 +307,7 @@
     var _ = t.IS_IE9 = /MSIE\s9\.0/.test(r);
     var w = t.IS_IE = /MSIE\s([\d.]+)/.test(r);
     var S = t.TOUCH_ENABLED = !! ("ontouchstart" in window || window.DocumentTouch && document instanceof window
-      .DocumentTouch);
+        .DocumentTouch);
     var E = t.BACKGROUND_SIZE_SUPPORTED = "backgroundSize" in document.createElement("video").style;
     var M = t.HASVIDEO = !! document.createElement("video").canPlayType;
     var O = t.IS_X5TBS = /TBS\/\d+/i.test(r);
@@ -321,7 +321,7 @@
           e = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
           if (e) {
             window.console && console.log("FLASH_VERSION", parseInt(e.GetVariable("$version").split(" ")[
-              1].split(",")[0]));
+                1].split(",")[0]));
             return true
           }
         } catch (t) {
@@ -538,7 +538,7 @@
     function h(e) {
       e = e | 0;
       var t = 3600,
-        r = 60;
+          r = 60;
       var n = e / t | 0;
       var i = (e - n * t) / r | 0;
       var o = e - n * t - i * r;
@@ -558,20 +558,22 @@
       fullscreenchange: null,
       fullscreenerror: null
     };
-    var d = [["requestFullscreen", "exitFullscreen", "fullscreenElement", "fullscreenEnabled",
-      "fullscreenchange", "fullscreenerror"], ["webkitRequestFullscreen", "webkitExitFullscreen",
-      "webkitFullscreenElement", "webkitFullscreenEnabled", "webkitfullscreenchange",
-      "webkitfullscreenerror"], ["webkitRequestFullScreen", "webkitCancelFullScreen",
-      "webkitCurrentFullScreenElement", "webkitCancelFullScreen", "webkitfullscreenchange",
-      "webkitfullscreenerror"], ["mozRequestFullScreen", "mozCancelFullScreen",
-      "mozFullScreenElement", "mozFullScreenEnabled", "mozfullscreenchange", "mozfullscreenerror"], [
-      "msRequestFullscreen", "msExitFullscreen", "msFullscreenElement", "msFullscreenEnabled",
-      "MSFullscreenChange", "MSFullscreenError"]];
+    var d = [
+      ["requestFullscreen", "exitFullscreen", "fullscreenElement", "fullscreenEnabled", "fullscreenchange", "fullscreenerror"],
+      ["webkitRequestFullscreen", "webkitExitFullscreen", "webkitFullscreenElement", "webkitFullscreenEnabled", "webkitfullscreenchange", "webkitfullscreenerror"],
+      ["webkitRequestFullScreen", "webkitCancelFullScreen", "webkitFullScreenElement", "webkitCancelFullScreen", "webkitfullscreenchange", "webkitfullscreenerror"],
+      ["mozRequestFullScreen", "mozCancelFullScreen", "mozFullScreenElement", "mozFullScreenEnabled", "mozfullscreenchange", "mozfullscreenerror"],
+      ["msRequestFullscreen", "msExitFullscreen", "msFullscreenElement", "msFullscreenEnabled", "MSFullscreenChange", "MSFullscreenError"],
+      ["webkitEnterFullscreen", "webkitExitFullscreen", "webkitDisplayingFullscreen", "webkitSupportsFullscreen", "webkitbeginfullscreen", "webkitfullscreenerror"],
+      ["webkitEnterFullScreen", "webkitExitFullScreen", "webkitDisplayingFullscreen", "webkitSupportsFullscreen", "webkitbeginfullscreen", "webkitfullscreenerror"],
+    ];
     var v = d[0];
     var y = void 0;
+    var tmpVideo = document.createElement('video');
     for (var m = 0; m < d.length; m++) {
-      if (d[m][1] in document) {
-        y = d[m]
+      if (d[m][0] in document || d[m][0] in tmpVideo) {
+        y = d[m];
+        break;
       }
     }
     if (y) {
@@ -580,7 +582,7 @@
       }
     }
     function b(e) {
-      w.__isFullscreen = !! document[f.fullscreenElement];
+      w.__isFullscreen = !! document[f.fullscreenElement] || (w.player.video && w.player.video.el[f.fullscreenElement]);
       if (!w.__isFullscreen) {
         i.off(document, f.fullscreenchange, b)
       }
@@ -602,7 +604,11 @@
       if (f.requestFullscreen) {
         if (t) {
           i.on(document, f.fullscreenchange, b);
-          r && r[f.requestFullscreen]()
+          if (r && r[f.requestFullscreen]) {
+            r[f.requestFullscreen]();
+          } else if (e && e.video && e.video.el && e.video.el[f.requestFullscreen]) {
+            e.video.el[f.requestFullscreen]();
+          }
         } else {
           document[f.exitFullscreen]()
         }
@@ -885,7 +891,7 @@
         this.bigplay.render(this.el);
         var i = void 0;
         if (!this.options.controls || this.options.controls == "default" || this.options.flash && this.options
-            .controls == "system") {
+                .controls == "system") {
           i = true
         } else {
           i = false
@@ -904,20 +910,19 @@
           if (!video.el) return;
 
           var lastPostion;
-          var lastStuckTime;
           var HAVE_CURRENT_DATA = 2,
-            HAVE_METADATA = 1,
-            HAVE_NOTHING = 0,
-            NETWORK_LOADING = 2,
-            NETWORK_NO_SOURCE = 3,
-            MEDIA_ERR_NETWORK = 2,
-            MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+              HAVE_METADATA = 1,
+              HAVE_NOTHING = 0,
+              NETWORK_LOADING = 2,
+              NETWORK_NO_SOURCE = 3,
+              MEDIA_ERR_NETWORK = 2,
+              MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
 
           var loadingMonitor = setInterval(function () {
             var isPlaying = video.el.paused === false && video.el.ended === false;
             var currentTime = video.el.currentTime;
             var isStuck = lastPostion === currentTime;
-            var isStuckTooLong = lastStuckTime && lastStuckTime + 10 * 1000 < (new Date).getTime(); // 卡住时间超过2分钟
+            var isStuckTooLong = video.lastStuckTime && video.lastStuckTime + 120 * 1000 < (new Date).getTime(); // 卡住时间超过2分钟
             var hasMediaError = !!video.el.error;
             var hasNativeNetworkError = hasMediaError && video.el.error.code === MEDIA_ERR_NETWORK;
             var hasNoSourceError = video.el.networkState === NETWORK_NO_SOURCE && video.el.readyState === HAVE_NOTHING && hasMediaError && video.el.error.code === MEDIA_ERR_SRC_NOT_SUPPORTED;
@@ -928,21 +933,21 @@
                 lastPostion = currentTime;
               }
 
-              if (isStuck && lastStuckTime === undefined) {
-                lastStuckTime = (new Date).getTime();
+              if (isStuck && video.lastStuckTime === undefined) {
+                video.lastStuckTime = (new Date).getTime();
               }
 
               if (lastPostion !== currentTime) {
                 lastPostion = undefined;
-                lastStuckTime = undefined;
+                video.lastStuckTime = undefined;
               }
             } else {
               if (
-                (video.el.readyState === HAVE_METADATA || video.el.readyState === HAVE_CURRENT_DATA) &&
-                video.el.networkState === NETWORK_LOADING) {
-                if (lastStuckTime === undefined) lastStuckTime = (new Date).getTime();
+                  (video.el.readyState === HAVE_METADATA || video.el.readyState === HAVE_CURRENT_DATA) &&
+                  video.el.networkState === NETWORK_LOADING) {
+                if (video.lastStuckTime === undefined) video.lastStuckTime = (new Date).getTime();
               } else {
-                lastStuckTime = undefined;
+                video.lastStuckTime = undefined;
               }
             }
 
@@ -980,13 +985,13 @@
         n = n || "cover";
         var i = /^\d+\.?\d{0,2}%$/;
         var o = void 0,
-          s = void 0;
+            s = void 0;
         if (i.test(e) || i.test(t)) {
           o = e;
           s = t
         } else {
           var a = this.video.videoWidth(),
-            l = this.video.videoHeight();
+              l = this.video.videoHeight();
           o = e;
           s = t;
           if (a && l) {
@@ -1195,7 +1200,7 @@
   }, function (e, t, r) {
     t = e.exports = r(8)();
     t.push([e.id,
-      ".vcp-player {\r\n    position: relative;\r\n    z-index: 0;\r\n    font-family: Tahoma, '\\5FAE\\8F6F\\96C5\\9ED1', \\u5b8b\\u4f53,Verdana,Arial,sans-serif;\r\n    background-color: black;\r\n}\r\n.vcp-player video{\r\n    display: block;\r\n    overflow: hidden;\r\n}\r\n.vcp-fullscreen.vcp-player, .vcp-fullscreen video {\r\n    width: 100%!important;\r\n    height: 100%!important;\r\n}\r\n/* 伪全屏 */\r\nbody.vcp-full-window {\r\n    width: 100%!important;\r\n    height: 100%!important;\r\n    overflow-y: auto;\r\n}\r\n.vcp-full-window .vcp-player {\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n}\r\n\r\n/* chrome flash 成功加载到DOM之前会闪白屏，所以加个黑屏遮一遮 */\r\n.vcp-pre-flash {\r\n    z-index: 1000; background: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0;\r\n}\r\n.vcp-controls-panel {\r\n    position: absolute;\r\n    bottom: 0;\r\n    width: 100%;\r\n    font-size: 16px;\r\n    height: 3em;\r\n    z-index: 1000;\r\n}\r\n.vcp-controls-panel.show{\r\n    -webkit-animation: fadeIn ease 0.8s;\r\n    animation: fadeIn ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}\r\n.vcp-controls-panel.hide{\r\n    -webkit-animation: fadeOut ease 0.8s;\r\n    animation: fadeOut ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}\r\n.vcp-panel-bg {\r\n    width: 100%;\r\n    height: 100%;\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n    background-color: rgb(36, 36, 36);\r\n    opacity: 0.8;\r\n    filter: alpha(opacity=80);\r\n    z-index: 1000;\r\n}\r\n\r\n.vcp-playtoggle {\r\n    cursor: pointer;\r\n    position: relative;\r\n    z-index: 1001;\r\n    width: 3em;\r\n    height: 100%;\r\n    float: left;\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/play_btn.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/play_btn.svg), none;\r\n}\r\n.vcp-playtoggle:hover, .vcp-playtoggle:focus {\r\n    background-color: slategray;\r\n    opacity: 0.9;\r\n    filter: alpha(opacity=90);\r\n}\r\n.touchable .vcp-playtoggle:hover {\r\n    background-color: transparent;\r\n    opacity: 1;\r\n}\r\n.vcp-playing .vcp-playtoggle {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/stop_btn.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/stop_btn.svg), none;\r\n}\r\n.vcp-bigplay {\r\n    display: none;\r\n    width: 100%;\r\n    height: 80%; /*会遮住原生控制栏*/\r\n    position: absolute;\r\n    background-color: white\\0;\r\n    filter: alpha(opacity=0); /*奇怪的IE8/9鼠标事件穿透*/\r\n    opacity: 0;\r\n    z-index: 1000;\r\n    top: 0;\r\n    left: 0;\r\n}\r\n\r\n.vcp-slider {\r\n    position: relative;\r\n    z-index: 1001;\r\n    float: left;\r\n    background: rgb(196, 196, 196);\r\n    height: 10px;\r\n    opacity: 0.8;\r\n    filter: alpha(opacity=80);\r\n    cursor: pointer;\r\n}\r\n.vcp-slider .vcp-slider-track {\r\n    width: 0;\r\n    height: 100%;\r\n    margin-top: 0;\r\n    opacity: 1;\r\n    filter: alpha(opacity=100);\r\n    background-color: dodgerblue; /*beautiful blue*/\r\n}\r\n.vcp-slider .vcp-slider-thumb {\r\n    cursor: pointer;\r\n    background-color: white;\r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n    border-radius: 1em!important;\r\n    height: 10px;\r\n    margin-left: -5px;\r\n    width: 10px;\r\n}\r\n\r\n.vcp-slider-vertical {\r\n    position: relative;\r\n    width: 0.5em;\r\n    height: 8em;\r\n    top: -5.6em;\r\n    z-index: 1001;\r\n    background-color: rgb(28, 28, 28);\r\n    opacity: 0.9;\r\n    filter: alpha(opacity=90);\r\n    cursor: pointer;\r\n}\r\n.vcp-slider-vertical .vcp-slider-track {\r\n    background-color: rgb(18, 117, 207);\r\n    width: 0.5em;\r\n    height: 100%;\r\n    opacity: 0.8;\r\n    filter: alpha(opacity=80);\r\n}\r\n.vcp-slider-vertical .vcp-slider-thumb {\r\n    cursor: pointer;\r\n    position: absolute;\r\n    background-color: aliceblue;\r\n    width: 0.8em;\r\n    height: 0.8em;\r\n    border-radius: 0.8em!important;\r\n    margin-top: -0.4em;\r\n    top: 0;\r\n    left: -0.15em;\r\n}\r\n/* 时间线/进度条 */\r\n.vcp-timeline {\r\n    top: -10px;\r\n    left: 0;\r\n    height: 10px;\r\n    position: absolute;\r\n    z-index: 1001;\r\n    width: 100%;\r\n}\r\n.vcp-timeline .vcp-slider-thumb {\r\n    top: -4px;\r\n}\r\n.vcp-timeline .vcp-slider {\r\n    margin-top: 8px;\r\n    height: 2px;\r\n    width: 100%;\r\n}\r\n.vcp-timeline:hover .vcp-slider {\r\n    margin-top: 0;\r\n    height: 10px;\r\n}\r\n.vcp-timeline:hover .vcp-slider-thumb {\r\n    display: block;\r\n    width: 16px;\r\n    height: 16px;\r\n    top: -3px;\r\n    margin-left: -8px;\r\n}\r\n/* 时间展示 */\r\n.vcp-timelabel {\r\n    display: inline-block;\r\n    line-height: 3em;\r\n    height: 3em;\r\n    width: 3em;\r\n    float: left;\r\n    color: white;\r\n    padding: 0 9px;\r\n    z-index: 1001;\r\n    position: relative;\r\n}\r\n/* 音量控制 */\r\n.vcp-volume {\r\n    height: 3em;\r\n    width: 3em;\r\n    cursor: pointer;\r\n    position: relative;\r\n    z-index: 1001;\r\n    float: right;\r\n    background-color: transparent;\r\n    opacity: 0.9;\r\n    filter: alpha(opacity=90);\r\n}\r\n.vcp-volume-icon {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/volume.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/volume.svg), none;\r\n    display: inline-block;\r\n    width: 3em;\r\n    height: 3em;\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n}\r\n.vcp-volume-muted .vcp-volume-icon {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/muted.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/muted.svg), none;\r\n}\r\n.vcp-volume .vcp-slider-vertical {\r\n    top: -8.4em;\r\n    left: 1em;\r\n    display: none;\r\n}\r\n.vcp-volume .vcp-slider-track {\r\n    position: absolute;\r\n    bottom: 0;\r\n}\r\n.vcp-volume:hover .vcp-slider-vertical {\r\n    display: block;\r\n}\r\n.vcp-volume .vcp-volume-bg {\r\n    height: 8.8em;\r\n    width: 2em;\r\n    position: absolute;\r\n    left: 0.25em;\r\n    top: -8.8em;\r\n    background: rgb(36,36,36);\r\n    display: none;\r\n}\r\n.vcp-volume:hover .vcp-volume-bg, .vcp-volume:hover .vcp-slider-vertical {\r\n    display: block;\r\n}\r\n/* 全屏控件 */\r\n.vcp-fullscreen-toggle {\r\n    position: relative;\r\n    width: 3em;\r\n    height: 3em;\r\n    float: right;\r\n    cursor: pointer;\r\n    z-index: 1001;\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen.svg), none;\r\n}\r\n.vcp-fullscreen .vcp-fullscreen-toggle {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen_exit.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen_exit.svg), none;\r\n}\r\n\r\n.vcp-loading {\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    margin-top: -27px;\r\n    display: none;\r\n}\r\n\r\n.vcp-poster {\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n    overflow: hidden;\r\n    z-index: 1000;\r\n    width: 100%;\r\n    height: 100%;\r\n    display: none;\r\n}\r\n.vcp-poster-pic {\r\n    position: relative;\r\n}\r\n.vcp-poster-pic.default{\r\n    left: 50%;\r\n    top: 50%;\r\n    -ms-transform: translate(-50%, -50%); /* IE 9 */\r\n    -webkit-transform: translate(-50%, -50%); /* Safari */\r\n    transform: translate(-50%, -50%);\r\n}\r\n.vcp-poster-pic.cover{\r\n    width: 100%;\r\n    left: 50%;\r\n    top: 50%;\r\n    -ms-transform: translate(-50%, -50%); /* IE 9 */\r\n    -webkit-transform: translate(-50%, -50%); /* Safari */\r\n    transform: translate(-50%, -50%);\r\n}\r\n.vcp-poster-pic.stretch{\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.vcp-error-tips .bi-failure-face {font-size: 50px; margin-bottom: 30px}\r\n\r\n.vcp-error-tips .vcp-error-retry {cursor: pointer;}\r\n\r\n.vcp-error-tips {position: absolute; z-index: 1001; width: 100%; height: 100%; left: 0; top: 0; color: white; background-color: rgb(35, 35, 35); justify-content: center; align-items: center; flex-direction: column; display: none;\r\n}\r\n\r\n.vcp-clarityswitcher{\r\n    height: 3em;\r\n    width: 3em;\r\n    cursor: pointer;\r\n    position: relative;\r\n    z-index: 1001;\r\n    float: right;\r\n    background-color: transparent;\r\n    opacity: 0.9;\r\n}\r\n.vcp-vertical-switcher-container{\r\n    width: 3em;\r\n    position: absolute;\r\n    left: 0em;\r\n    bottom: 2.4em;\r\n    background: rgb(36,36,36);\r\n    display: none;\r\n}\r\n.vcp-vertical-switcher-current{\r\n    display: block;\r\n    color: #fff;\r\n    text-align: center;\r\n    line-height:3em;\r\n}\r\n.vcp-vertical-switcher-item{\r\n    display: block;\r\n    color: #fff;\r\n    text-align: center;\r\n    line-height:2em;\r\n}\r\n.vcp-vertical-switcher-item.current{\r\n    color: #888;\r\n}\r\n/* animations */\r\n@-webkit-keyframes fadeOut {\r\n    from {\r\n        opacity: 1;\r\n    }\r\n    to {\r\n        opacity: 0;\r\n    }\r\n}\r\n\r\n@keyframes fadeOut {\r\n    from {\r\n        opacity: 1;\r\n    }\r\n    to {\r\n        opacity: 0;\r\n    }\r\n}\r\n\r\n.fadeOut {\r\n    -webkit-animation: fadeOut ease 0.8s;\r\n    animation: fadeOut ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}\r\n\r\n@-webkit-keyframes fadeIn {\r\n    from {\r\n        opacity: 0;\r\n    }\r\n    to {\r\n        opacity: 1;\r\n    }\r\n}\r\n\r\n@keyframes fadeIn {\r\n    from {\r\n        opacity: 0;\r\n    }\r\n    to {\r\n        opacity: 1;\r\n    }\r\n}\r\n\r\n.fadeIn {\r\n    -webkit-animation: fadeIn ease 0.8s;\r\n    animation: fadeIn ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}",
+      ".vcp-player {\r\n    position: relative;\r\n    z-index: 0;\r\n    font-family: Tahoma, '\\5FAE\\8F6F\\96C5\\9ED1', \\u5b8b\\u4f53,Verdana,Arial,sans-serif;\r\n    background-color: black;\r\n}\r\n.vcp-player video{\r\n    display: block;\r\n    overflow: hidden;\r\n}\r\n.vcp-fullscreen.vcp-player, .vcp-fullscreen video {\r\n    width: 100%!important;\r\n    height: 100%!important;\r\n}\r\n/* 伪全屏 */\r\nbody.vcp-full-window {\r\n    width: 100%!important;\r\n    height: 100%!important;\r\n    overflow-y: auto;\r\n}\r\n.vcp-full-window .vcp-player {\r\n    position: fixed;\r\n    left: 0;\r\n    top: 0;\r\n}\r\n\r\n/* chrome flash 成功加载到DOM之前会闪白屏，所以加个黑屏遮一遮 */\r\n.vcp-pre-flash {\r\n    z-index: 1000; background: black; width: 100%; height: 100%; position: absolute; top: 0; left: 0;\r\n}\r\n.vcp-controls-panel {\r\n    position: absolute;\r\n    bottom: 0;\r\n    width: 100%;\r\n    font-size: 16px;\r\n    height: 3em;\r\n    z-index: 1000;\r\n}\r\n.vcp-controls-panel.show{\r\n    -webkit-animation: fadeIn ease 0.8s;\r\n    animation: fadeIn ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}\r\n.vcp-controls-panel.hide{\r\n    -webkit-animation: fadeOut ease 0.8s;\r\n    animation: fadeOut ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}\r\n.vcp-panel-bg {\r\n    width: 100%;\r\n    height: 100%;\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n    background-color: rgb(36, 36, 36);\r\n    opacity: 0.8;\r\n    filter: alpha(opacity=80);\r\n    z-index: 1000;\r\n}\r\n\r\n.vcp-playtoggle {\r\n    cursor: pointer;\r\n    position: relative;\r\n    z-index: 1001;\r\n    width: 3em;\r\n    height: 100%;\r\n    float: left;\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/play_btn.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/play_btn.svg), none;\r\n}\r\n.vcp-playtoggle:hover, .vcp-playtoggle:focus {\r\n    background-color: slategray;\r\n    opacity: 0.9;\r\n    filter: alpha(opacity=90);\r\n}\r\n.touchable .vcp-playtoggle:hover {\r\n    background-color: transparent;\r\n    opacity: 1;\r\n}\r\n.vcp-playing .vcp-playtoggle {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/stop_btn.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/stop_btn.svg), none;\r\n}\r\n.vcp-bigplay {\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%; /*会遮住原生控制栏*/\r\n    position: absolute;\r\n    background-color: white\\0;\r\n    filter: alpha(opacity=0); /*奇怪的IE8/9鼠标事件穿透*/\r\n    opacity: 0;\r\n    z-index: 1000;\r\n    top: 0;\r\n    left: 0;\r\n}\r\n\r\n.vcp-slider {\r\n    position: relative;\r\n    z-index: 1001;\r\n    float: left;\r\n    background: rgb(196, 196, 196);\r\n    height: 10px;\r\n    opacity: 0.8;\r\n    filter: alpha(opacity=80);\r\n    cursor: pointer;\r\n}\r\n.vcp-slider .vcp-slider-track {\r\n    width: 0;\r\n    height: 100%;\r\n    margin-top: 0;\r\n    opacity: 1;\r\n    filter: alpha(opacity=100);\r\n    background-color: dodgerblue; /*beautiful blue*/\r\n}\r\n.vcp-slider .vcp-slider-thumb {\r\n    cursor: pointer;\r\n    background-color: white;\r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n    border-radius: 1em!important;\r\n    height: 10px;\r\n    margin-left: -5px;\r\n    width: 10px;\r\n}\r\n\r\n.vcp-slider-vertical {\r\n    position: relative;\r\n    width: 0.5em;\r\n    height: 8em;\r\n    top: -5.6em;\r\n    z-index: 1001;\r\n    background-color: rgb(28, 28, 28);\r\n    opacity: 0.9;\r\n    filter: alpha(opacity=90);\r\n    cursor: pointer;\r\n}\r\n.vcp-slider-vertical .vcp-slider-track {\r\n    background-color: rgb(18, 117, 207);\r\n    width: 0.5em;\r\n    height: 100%;\r\n    opacity: 0.8;\r\n    filter: alpha(opacity=80);\r\n}\r\n.vcp-slider-vertical .vcp-slider-thumb {\r\n    cursor: pointer;\r\n    position: absolute;\r\n    background-color: aliceblue;\r\n    width: 0.8em;\r\n    height: 0.8em;\r\n    border-radius: 0.8em!important;\r\n    margin-top: -0.4em;\r\n    top: 0;\r\n    left: -0.15em;\r\n}\r\n/* 时间线/进度条 */\r\n.vcp-timeline {\r\n    top: -10px;\r\n    left: 0;\r\n    height: 10px;\r\n    position: absolute;\r\n    z-index: 1001;\r\n    width: 100%;\r\n}\r\n.vcp-timeline .vcp-slider-thumb {\r\n    top: -4px;\r\n}\r\n.vcp-timeline .vcp-slider {\r\n    margin-top: 8px;\r\n    height: 2px;\r\n    width: 100%;\r\n}\r\n.vcp-timeline:hover .vcp-slider {\r\n    margin-top: 0;\r\n    height: 10px;\r\n}\r\n.vcp-timeline:hover .vcp-slider-thumb {\r\n    display: block;\r\n    width: 16px;\r\n    height: 16px;\r\n    top: -3px;\r\n    margin-left: -8px;\r\n}\r\n/* 时间展示 */\r\n.vcp-timelabel {\r\n    display: inline-block;\r\n    line-height: 3em;\r\n    height: 3em;\r\n    width: 3em;\r\n    float: left;\r\n    color: white;\r\n    padding: 0 9px;\r\n    z-index: 1001;\r\n    position: relative;\r\n}\r\n/* 音量控制 */\r\n.vcp-volume {\r\n    height: 3em;\r\n    width: 3em;\r\n    cursor: pointer;\r\n    position: relative;\r\n    z-index: 1001;\r\n    float: right;\r\n    background-color: transparent;\r\n    opacity: 0.9;\r\n    filter: alpha(opacity=90);\r\n}\r\n.vcp-volume-icon {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/volume.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/volume.svg), none;\r\n    display: inline-block;\r\n    width: 3em;\r\n    height: 3em;\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n}\r\n.vcp-volume-muted .vcp-volume-icon {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/muted.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/muted.svg), none;\r\n}\r\n.vcp-volume .vcp-slider-vertical {\r\n    top: -8.4em;\r\n    left: 1em;\r\n    display: none;\r\n}\r\n.vcp-volume .vcp-slider-track {\r\n    position: absolute;\r\n    bottom: 0;\r\n}\r\n.vcp-volume:hover .vcp-slider-vertical {\r\n    display: block;\r\n}\r\n.vcp-volume .vcp-volume-bg {\r\n    height: 8.8em;\r\n    width: 2em;\r\n    position: absolute;\r\n    left: 0.25em;\r\n    top: -8.8em;\r\n    background: rgb(36,36,36);\r\n    display: none;\r\n}\r\n.vcp-volume:hover .vcp-volume-bg, .vcp-volume:hover .vcp-slider-vertical {\r\n    display: block;\r\n}\r\n/* 全屏控件 */\r\n.vcp-fullscreen-toggle {\r\n    position: relative;\r\n    width: 3em;\r\n    height: 3em;\r\n    float: right;\r\n    cursor: pointer;\r\n    z-index: 1001;\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen.svg), none;\r\n}\r\n.vcp-fullscreen .vcp-fullscreen-toggle {\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen_exit.png);\r\n    background-image: url(//imgcache.qq.com/open/qcloud/video/vcplayer/img/fullscreen_exit.svg), none;\r\n}\r\n\r\n.vcp-loading {\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    margin-top: -27px;\r\n    display: none;\r\n}\r\n\r\n.vcp-poster {\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n    overflow: hidden;\r\n    z-index: 1000;\r\n    width: 100%;\r\n    height: 100%;\r\n    display: none;\r\n}\r\n.vcp-poster-pic {\r\n    position: relative;\r\n}\r\n.vcp-poster-pic.default{\r\n    left: 50%;\r\n    top: 50%;\r\n    -ms-transform: translate(-50%, -50%); /* IE 9 */\r\n    -webkit-transform: translate(-50%, -50%); /* Safari */\r\n    transform: translate(-50%, -50%);\r\n}\r\n.vcp-poster-pic.cover{\r\n    width: 100%;\r\n    left: 50%;\r\n    top: 50%;\r\n    -ms-transform: translate(-50%, -50%); /* IE 9 */\r\n    -webkit-transform: translate(-50%, -50%); /* Safari */\r\n    transform: translate(-50%, -50%);\r\n}\r\n.vcp-poster-pic.stretch{\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.vcp-error-tips .bi-failure-face {font-size: 50px; margin-bottom: 30px}\r\n\r\n.vcp-error-tips .vcp-error-retry {cursor: pointer;}\r\n\r\n.vcp-error-tips {position: absolute; z-index: 1001; width: 100%; height: 100%; left: 0; top: 0; color: white; background-color: rgb(35, 35, 35); justify-content: center; align-items: center; flex-direction: column; display: none;\r\n}\r\n\r\n.vcp-clarityswitcher{\r\n    height: 3em;\r\n    width: 3em;\r\n    cursor: pointer;\r\n    position: relative;\r\n    z-index: 1001;\r\n    float: right;\r\n    background-color: transparent;\r\n    opacity: 0.9;\r\n}\r\n.vcp-vertical-switcher-container{\r\n    width: 3em;\r\n    position: absolute;\r\n    left: 0em;\r\n    bottom: 2.4em;\r\n    background: rgb(36,36,36);\r\n    display: none;\r\n}\r\n.vcp-vertical-switcher-current{\r\n    display: block;\r\n    color: #fff;\r\n    text-align: center;\r\n    line-height:3em;\r\n}\r\n.vcp-vertical-switcher-item{\r\n    display: block;\r\n    color: #fff;\r\n    text-align: center;\r\n    line-height:2em;\r\n}\r\n.vcp-vertical-switcher-item.current{\r\n    color: #888;\r\n}\r\n/* animations */\r\n@-webkit-keyframes fadeOut {\r\n    from {\r\n        opacity: 1;\r\n    }\r\n    to {\r\n        opacity: 0;\r\n    }\r\n}\r\n\r\n@keyframes fadeOut {\r\n    from {\r\n        opacity: 1;\r\n    }\r\n    to {\r\n        opacity: 0;\r\n    }\r\n}\r\n\r\n.fadeOut {\r\n    -webkit-animation: fadeOut ease 0.8s;\r\n    animation: fadeOut ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}\r\n\r\n@-webkit-keyframes fadeIn {\r\n    from {\r\n        opacity: 0;\r\n    }\r\n    to {\r\n        opacity: 1;\r\n    }\r\n}\r\n\r\n@keyframes fadeIn {\r\n    from {\r\n        opacity: 0;\r\n    }\r\n    to {\r\n        opacity: 1;\r\n    }\r\n}\r\n\r\n.fadeIn {\r\n    -webkit-animation: fadeIn ease 0.8s;\r\n    animation: fadeIn ease 0.8s;\r\n    animation-fill-mode: forwards;\r\n    -webkit-animation-fill-mode: forwards;\r\n}",
       ""])
   }, function (e, t) {
     e.exports = function () {
@@ -1235,24 +1240,24 @@
     }
   }, function (e, t, r) {
     var n = {}, i = function (e) {
-        var t;
-        return function () {
-          if (typeof t === "undefined") t = e.apply(this, arguments);
-          return t
-        }
-      }, o = i(function () {
-        return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase())
-      }),
-      s = i(function () {
-        return document.head || document.getElementsByTagName("head")[0]
-      }),
-      a = null,
-      l = 0,
-      u = [];
+          var t;
+          return function () {
+            if (typeof t === "undefined") t = e.apply(this, arguments);
+            return t
+          }
+        }, o = i(function () {
+          return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase())
+        }),
+        s = i(function () {
+          return document.head || document.getElementsByTagName("head")[0]
+        }),
+        a = null,
+        l = 0,
+        u = [];
     e.exports = function (e, t) {
       if (false) {
         if (typeof document !== "object") throw new Error(
-          "The style-loader cannot be used in a non-browser environment")
+            "The style-loader cannot be used in a non-browser environment")
       }
       t = t || {};
       if (typeof t.singleton === "undefined") t.singleton = o();
@@ -1373,8 +1378,8 @@
         n = g.bind(null, r, o, false);
         i = g.bind(null, r, o, true)
       } else if (e.sourceMap && typeof URL === "function" && typeof URL.createObjectURL === "function" &&
-        typeof URL.revokeObjectURL === "function" && typeof Blob === "function" && typeof btoa ===
-        "function") {
+          typeof URL.revokeObjectURL === "function" && typeof Blob === "function" && typeof btoa ===
+          "function") {
         r = v(t);
         n = _.bind(null, r);
         i = function () {
@@ -1441,7 +1446,7 @@
       var n = t.sourceMap;
       if (n) {
         r += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON
-            .stringify(n)))) + " */"
+                .stringify(n)))) + " */"
       }
       var i = new Blob([r], {
         type: "text/css"
@@ -1457,7 +1462,7 @@
       return typeof e
     } : function (e) {
       return e && typeof Symbol === "function" && e.constructor === Symbol && e !== Symbol.prototype ?
-        "symbol" : typeof e
+          "symbol" : typeof e
     };
     var i = r(11);
     var o = d(i);
@@ -1571,7 +1576,7 @@
                 u.console.error("加载视频文件超时")
               } else {
                 u.console.error("无法加载视频文件，请检查网络，以及视频文件是否允许跨域请求访问，m3u8文件是否存在 " + (t.response && t.response
-                    .status ? "netstatus:" + t.response.status : ""))
+                        .status ? "netstatus:" + t.response.status : ""))
               }
               this.notify({
                 type: "error",
@@ -1631,8 +1636,8 @@
               4: "MEDIA_ERR_SRC_NOT_SUPPORTED"
             };
             t.detail = this.el && this.el.error || {
-                code: e.code
-              };
+                  code: e.code
+                };
             t.detail.reason = r[t.detail.code];
             break;
           case c.MSG.Ended:
@@ -1995,13 +2000,13 @@
         var o = this.__flashCB;
         this.__id = i;
         e.innerHTML = '\n       <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="" id="' +
-          i + '" width="100%" height="100%">\n            <param name="movie"  value="' + t +
-          '" />\n            <param name="quality" value="autohigh" />\n            <param name="swliveconnect" value="true" />\n            <param name="allowScriptAccess" value="always" />\n            <param name="bgcolor" value="#000" />\n            <param name="allowFullScreen" value="true" />\n            <param name="wmode" value="' +
-          n + '" />\n            <param name="FlashVars" value="cbName=' + o +
-          '" />\n\n            <embed src="' + t + '" width="100%" height="100%" name="' + i +
-          '"\n                   quality="autohigh"\n                   bgcolor="#000"\n                   align="middle" allowFullScreen="true"\n                   allowScriptAccess="always"\n                   type="application/x-shockwave-flash"\n                   swliveconnect="true"\n                   wmode="' +
-          n + '"\n                   FlashVars="cbName=' + o +
-          '"\n                   pluginspage="http://www.macromedia.com/go/getflashplayer" >\n            </embed>\n        </object>\n        ';
+            i + '" width="100%" height="100%">\n            <param name="movie"  value="' + t +
+            '" />\n            <param name="quality" value="autohigh" />\n            <param name="swliveconnect" value="true" />\n            <param name="allowScriptAccess" value="always" />\n            <param name="bgcolor" value="#000" />\n            <param name="allowFullScreen" value="true" />\n            <param name="wmode" value="' +
+            n + '" />\n            <param name="FlashVars" value="cbName=' + o +
+            '" />\n\n            <embed src="' + t + '" width="100%" height="100%" name="' + i +
+            '"\n                   quality="autohigh"\n                   bgcolor="#000"\n                   align="middle" allowFullScreen="true"\n                   allowScriptAccess="always"\n                   type="application/x-shockwave-flash"\n                   swliveconnect="true"\n                   wmode="' +
+            n + '"\n                   FlashVars="cbName=' + o +
+            '"\n                   pluginspage="http://www.macromedia.com/go/getflashplayer" >\n            </embed>\n        </object>\n        ';
         this.owner = e;
         this.cover = a.createEl("div", {
           "class": "vcp-pre-flash"
@@ -2156,7 +2161,7 @@
               if (!this.options.live) {
                 if (t.code == "NetStream.Buffer.Full") {
                   if (this.__prevPlayState == p.PlayStates.PAUSED || this.__prevPlayState == p.PlayStates
-                      .STOP) {}
+                          .STOP) {}
                   this.__prevPlayState = null;
                   r.type = o.MSG.Seeked
                 } else if (t.code == "NetStream.Seek.Complete") {}
@@ -2164,10 +2169,14 @@
               if (t.code == "NetConnection.Connect.Closed") {
                 if (this.options.src.indexOf("rtmp://") > -1) {
                   if (this.playState == p.PlayStates.STOP) {} else {
-                    r.type = "error";
-                    t = {
-                      code: 1002,
-                      reason: t.code
+                    if (this.player.video.switchVideo) {
+                      this.player.video.switchVideo = undefined;
+                    } else {
+                      r.type = "error";
+                      t = {
+                        code: 1002,
+                        reason: t.code
+                      }
                     }
                   }
                 }
@@ -2226,19 +2235,19 @@
         return this.el && (this.el.height = e)
       };
       t.prototype.play = function E() {
-        this.el.playerResume()
+        this.el.playerResume && this.el.playerResume()
       };
       t.prototype.togglePlay = function M() {
         if (!this.metaDataLoaded) {
           this.player.load()
         } else {
           if (this.playState == p.PlayStates.PAUSED) {
-            this.el.playerResume()
+            this.el.playerResume && this.el.playerResume()
           } else if (this.playState == p.PlayStates.PLAYING) {
             this.el.playerPause()
           } else if (this.playState == p.PlayStates.STOP) {
             this.currentTime(0);
-            this.el.playerResume()
+            this.el.playerResume && this.el.playerResume()
           } else {
             this.el.playerPlay()
           }
@@ -3220,6 +3229,7 @@
           this.currentItem.classList.remove("current");
           e.target.classList.add("current");
           this.currentItem = e.target;
+          this.player.video.switchVideo = true;
           this.player.switchClarity(t)
         } else {
           if (!this.show) {} else {}
@@ -3324,7 +3334,7 @@
       return typeof e
     } : function (e) {
       return e && typeof Symbol === "function" && e.constructor === Symbol && e !== Symbol.prototype ?
-        "symbol" : typeof e
+          "symbol" : typeof e
     };
     var i = r(11);
     var o = h(i);
@@ -3569,13 +3579,13 @@
       }
       function r(e, t, r, n) {
         var i = ["opacity", t, ~~ (100 * e), r, n].join("-"),
-          o = .01 + r / n * 100,
-          s = Math.max(1 - (1 - e) / t * (100 - o), e),
-          a = u.substring(0, u.indexOf("Animation")).toLowerCase(),
-          l = a && "-" + a + "-" || "";
+            o = .01 + r / n * 100,
+            s = Math.max(1 - (1 - e) / t * (100 - o), e),
+            a = u.substring(0, u.indexOf("Animation")).toLowerCase(),
+            l = a && "-" + a + "-" || "";
         return h[i] || (c.insertRule("@" + l + "keyframes " + i + "{0%{opacity:" + s + "}" + o +
-          "%{opacity:" + e + "}" + (o + .01) + "%{opacity:1}" + (o + t) % 100 + "%{opacity:" + e +
-          "}100%{opacity:" + s + "}}", c.cssRules.length), h[i] = 1), i
+            "%{opacity:" + e + "}" + (o + .01) + "%{opacity:1}" + (o + t) % 100 + "%{opacity:" + e +
+            "}100%{opacity:" + s + "}}", c.cssRules.length), h[i] = 1), i
       }
       function n(e, t) {
         var r, n, i = e.style;
@@ -3639,16 +3649,16 @@
             }))))
           }
           var l, u = n.scale * (n.length + n.width),
-            c = 2 * n.scale * u,
-            p = -(n.width + n.length) * n.scale * 2 + "px",
-            h = i(o(), {
-              position: "absolute",
-              top: p,
-              left: p
-            });
+              c = 2 * n.scale * u,
+              p = -(n.width + n.length) * n.scale * 2 + "px",
+              h = i(o(), {
+                position: "absolute",
+                top: p,
+                left: p
+              });
           if (n.shadow) for (l = 1; l <= n.lines; l++) {
             a(l, -2,
-              "progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)")
+                "progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)")
           }
           for (l = 1; l <= n.lines; l++) {
             a(l)
@@ -3657,101 +3667,101 @@
         }, a.prototype.opacity = function (e, t, r, n) {
           var i = e.firstChild;
           n = n.shadow && n.lines || 0, i && t + n < i.childNodes.length && (i = i.childNodes[t + n], i =
-            i && i.firstChild, i = i && i.firstChild, i && (i.opacity = r))
+              i && i.firstChild, i = i && i.firstChild, i && (i.opacity = r))
         }
       }
       var u, c, p = ["webkit", "Moz", "ms", "O"],
-        h = {}, f = {
-          lines: 12,
-          length: 7,
-          width: 5,
-          radius: 10,
-          scale: 1,
-          corners: 1,
-          color: "#000",
-          opacity: .25,
-          rotate: 0,
-          direction: 1,
-          speed: 1,
-          trail: 100,
-          fps: 20,
-          zIndex: 2e9,
-          className: "spinner",
-          top: "50%",
-          left: "50%",
-          shadow: !1,
-          hwaccel: !1,
-          position: "absolute"
-        };
+          h = {}, f = {
+            lines: 12,
+            length: 7,
+            width: 5,
+            radius: 10,
+            scale: 1,
+            corners: 1,
+            color: "#000",
+            opacity: .25,
+            rotate: 0,
+            direction: 1,
+            speed: 1,
+            trail: 100,
+            fps: 20,
+            zIndex: 2e9,
+            className: "spinner",
+            top: "50%",
+            left: "50%",
+            shadow: !1,
+            hwaccel: !1,
+            position: "absolute"
+          };
       if (a.defaults = {}, o(a.prototype, {
-          spin: function v(t) {
-            this.stop();
-            var r = this,
-              n = r.opts,
-              o = r.el = e(null, {
-                className: n.className
-              });
-            if (i(o, {
-                position: n.position,
-                width: 0,
-                zIndex: n.zIndex,
-                left: n.left,
-                top: n.top
-              }), t && t.insertBefore(o, t.firstChild || null), o.setAttribute("role", "progressbar"), r.lines(
-                o, r.opts), !u) {
-              var s, a = 0,
-                l = (n.lines - 1) * (1 - n.direction) / 2,
-                c = n.fps,
-                p = c / n.speed,
-                h = (1 - n.opacity) / (p * n.trail / 100),
-                f = p / n.lines;
-              ! function d() {
-                a++;
-                for (var e = 0; e < n.lines; e++) {
-                  s = Math.max(1 - (a + (n.lines - e) * f) % p * h, n.opacity), r.opacity(o, e * n.direction +
-                    l, s, n)
-                }
-                r.timeout = r.el && setTimeout(d, ~~ (1e3 / c))
-              }()
+            spin: function v(t) {
+              this.stop();
+              var r = this,
+                  n = r.opts,
+                  o = r.el = e(null, {
+                    className: n.className
+                  });
+              if (i(o, {
+                    position: n.position,
+                    width: 0,
+                    zIndex: n.zIndex,
+                    left: n.left,
+                    top: n.top
+                  }), t && t.insertBefore(o, t.firstChild || null), o.setAttribute("role", "progressbar"), r.lines(
+                      o, r.opts), !u) {
+                var s, a = 0,
+                    l = (n.lines - 1) * (1 - n.direction) / 2,
+                    c = n.fps,
+                    p = c / n.speed,
+                    h = (1 - n.opacity) / (p * n.trail / 100),
+                    f = p / n.lines;
+                ! function d() {
+                  a++;
+                  for (var e = 0; e < n.lines; e++) {
+                    s = Math.max(1 - (a + (n.lines - e) * f) % p * h, n.opacity), r.opacity(o, e * n.direction +
+                        l, s, n)
+                  }
+                  r.timeout = r.el && setTimeout(d, ~~ (1e3 / c))
+                }()
+              }
+              return r
+            },
+            stop: function y() {
+              var e = this.el;
+              return e && (clearTimeout(this.timeout), e.parentNode && e.parentNode.removeChild(e), this.el =
+                  void 0), this
+            },
+            lines: function m(n, o) {
+              function a(t, r) {
+                return i(e(), {
+                  position: "absolute",
+                  width: o.scale * (o.length + o.width) + "px",
+                  height: o.scale * o.width + "px",
+                  background: t,
+                  boxShadow: r,
+                  transformOrigin: "left",
+                  transform: "rotate(" + ~~(360 / o.lines * c + o.rotate) + "deg) translate(" + o.scale * o
+                      .radius + "px,0)",
+                  borderRadius: (o.corners * o.scale * o.width >> 1) + "px"
+                })
+              }
+              for (var l, c = 0, p = (o.lines - 1) * (1 - o.direction) / 2; c < o.lines; c++) {
+                l = i(e(), {
+                  position: "absolute",
+                  top: 1 + ~(o.scale * o.width / 2) + "px",
+                  transform: o.hwaccel ? "translate3d(0,0,0)" : "",
+                  opacity: o.opacity,
+                  animation: u && r(o.opacity, o.trail, p + c * o.direction, o.lines) + " " + 1 / o.speed + "s linear infinite"
+                }), o.shadow && t(l, i(a("#000", "0 0 4px #000"), {
+                  top: "2px"
+                })), t(n, t(l, a(s(o.color, c), "0 0 1px rgba(0,0,0,.1)")))
+              }
+              return n
+            },
+            opacity: function g(e, t, r) {
+              t < e.childNodes.length && (e.childNodes[t].style.opacity = r)
             }
-            return r
-          },
-          stop: function y() {
-            var e = this.el;
-            return e && (clearTimeout(this.timeout), e.parentNode && e.parentNode.removeChild(e), this.el =
-              void 0), this
-          },
-          lines: function m(n, o) {
-            function a(t, r) {
-              return i(e(), {
-                position: "absolute",
-                width: o.scale * (o.length + o.width) + "px",
-                height: o.scale * o.width + "px",
-                background: t,
-                boxShadow: r,
-                transformOrigin: "left",
-                transform: "rotate(" + ~~(360 / o.lines * c + o.rotate) + "deg) translate(" + o.scale * o
-                  .radius + "px,0)",
-                borderRadius: (o.corners * o.scale * o.width >> 1) + "px"
-              })
-            }
-            for (var l, c = 0, p = (o.lines - 1) * (1 - o.direction) / 2; c < o.lines; c++) {
-              l = i(e(), {
-                position: "absolute",
-                top: 1 + ~(o.scale * o.width / 2) + "px",
-                transform: o.hwaccel ? "translate3d(0,0,0)" : "",
-                opacity: o.opacity,
-                animation: u && r(o.opacity, o.trail, p + c * o.direction, o.lines) + " " + 1 / o.speed + "s linear infinite"
-              }), o.shadow && t(l, i(a("#000", "0 0 4px #000"), {
-                top: "2px"
-              })), t(n, t(l, a(s(o.color, c), "0 0 1px rgba(0,0,0,.1)")))
-            }
-            return n
-          },
-          opacity: function g(e, t, r) {
-            t < e.childNodes.length && (e.childNodes[t].style.opacity = r)
-          }
-        }), "undefined" != typeof document) {
+          }), "undefined" != typeof document) {
         c = function () {
           var r = e("style", {
             type: "text/css"
@@ -3923,6 +3933,7 @@
             if (!player.options.live) video.el.currentTime = currentTime;
             video.el.removeEventListener('loadedmetadata', listener, false);
           };
+          video.lastStuckTime = undefined;
           video.el.src = '';
           video.el.src = src;
           player.play();
