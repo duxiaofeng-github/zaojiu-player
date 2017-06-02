@@ -2207,25 +2207,9 @@
                             if (t.code == "NetStream.Play.Stop") {}
                             break;
                         case "mediaTime":
-                            // if (!this.__videoLoaded) {
-                            //   clearTimeout(this.__videoLoadedTimer);
-                            //   this.__videoLoadedTimer = setTimeout(() => {
-                            //     this.__videoLoaded = true;
-                            //     debugger;
-                            //   }, 3000);
-                            // }
-                            //
-                            // if (this.__videoLoaded && !this.__videoPlayed) {
-                            //   this.__videoPlayed = true;
-                            //   this.__playing = true;
-                            //   this.__stopped = false;
-                            //   r.type = o.MSG.Play
-                            // } else {
                             this.__videoWidth = t.videoWidth;
                             this.__videoHeight = t.videoHeight;
                             r.type = o.MSG.TimeUpdate;
-                            // }
-
                             break;
                         case "error":
                             if (t.code == "NetStream.Seek.InvalidTime") {
