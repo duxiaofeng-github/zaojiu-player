@@ -314,6 +314,7 @@
         var k = t.IS_MQQB = !O && /MQQBrowser\/\d+/i.test(r);
         var P = t.IS_MOBILE = h || l;
         var T = t.IS_FILE_PROTOCOL = /file:/.test(location.protocol);
+        var IS_WINDOWS_WECHAT = t.IS_WINDOWS_WECHAT = /WindowsWechat/i.test(r);
         var C = t.IS_ENABLED_FLASH = function () {
             var e;
             if (document.all) {
@@ -2091,19 +2092,28 @@
                         case "ready":
                             this.el = w(this.__id);
                             this.setup();
-                            if (f.IS_FIREFOX) {
-                                var n = this;
-                                setTimeout(function () {
-                                    n.el.setAutoPlay(n.options.autoplay ? true : false);
-                                    n.__timebase = new Date - t.time;
-                                    n.load(n.options.src)
-                                }, 0)
+
+                            if (f.IS_WINDOWS_WECHAT) {
+                                r.type = "error";
+                                t = {
+                                    code: 5,
+                                    reason: 'Can\'t play flash at windows wechat'
+                                }
                             } else {
-                                this.el.setAutoPlay(this.options.autoplay ? true : false);
-                                this.__timebase = new Date - t.time;
-                                this.load(this.options.src)
+                                if (f.IS_FIREFOX) {
+                                    var n = this;
+                                    setTimeout(function () {
+                                        n.el.setAutoPlay(n.options.autoplay ? true : false);
+                                        n.__timebase = new Date - t.time;
+                                        n.load(n.options.src)
+                                    }, 0)
+                                } else {
+                                    this.el.setAutoPlay(this.options.autoplay ? true : false);
+                                    this.__timebase = new Date - t.time;
+                                    this.load(this.options.src)
+                                }
                             }
-                            return;
+
                             break;
                         case "metaData":
                             r.type = o.MSG.MetaLoaded;
@@ -3916,7 +3926,7 @@
             CrossDomainError: [2048]
         };
         var m = {
-            EnvError: '<i class="bi bi-failure-face"></i><div class="vcp-error-text">当前系统环境不支持播放该视频格式</div>',
+            EnvError: '<i class="bi bi-failure-face"></i><div class="vcp-error-text">当前系统环境不支持播放该视频格式，请使用其他浏览器打开</div>',
             VideoSourceError: '<i class="bi bi-failure-face"></i><div class="vcp-error-text">获取视频失败，请 <a class="vcp-error-retry">点击重试</a></div>',
             NetworkError: '<i class="bi bi-failure-face"></i><div class="vcp-error-text">网络错误，请检查网络配置并 <a class="vcp-error-retry">点击重试</a></div>',
             VideoDecodeError: '<i class="bi bi-failure-face"></i><div class="vcp-error-text">视频解码错误</div>',
