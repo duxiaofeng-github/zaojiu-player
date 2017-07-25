@@ -5,7 +5,7 @@ import {Subscription} from "rxjs/Subscription";
 import {Subject} from "rxjs/Subject";
 import 'rxjs/add/operator/first';
 import {createHTMLVideoElement} from "./html";
-import {canPlayTypeByFlash, createElementByString, isRtmp} from "./utils";
+import {canPlayTypeByFlash, createElementByString, IS_SUPPORT_FLASH, isRtmp} from "./utils";
 import {ZaojiuPlayer} from "./player";
 
 const styles = require('./player.scss');
@@ -106,7 +106,7 @@ export class VideoPlayer {
         this.el = createHTMLVideoElement();
         this.onVideoEvent();
         this.el.src = src.src;
-      } else if (canPlayTypeByFlash(src.minetype) && ZaojiuPlayer.FlashVideo) {
+      } else if (IS_SUPPORT_FLASH && canPlayTypeByFlash(src.minetype) && ZaojiuPlayer.FlashVideo) {
         this.el = new ZaojiuPlayer['FlashVideo'](this.opt);
         this.onVideoEvent();
         this.el.src = src;

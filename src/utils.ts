@@ -35,7 +35,6 @@ export const IS_CHROME = /Chrome/i.test(navigator.userAgent);
 export const IS_WINDOWS_WECHAT = /WindowsWechat/i.test(navigator.userAgent);
 export const IS_SUPPORT_MSE = 'MediaSource' in window;
 export const IS_SUPPORT_FLASH = flashVersion()[0] >= '10';
-export const SWF_VERSION = '5.4.0';
 
 export const createElementByString = (str: string): NodeList => {
   const tmpEle = document.createElement('div');
