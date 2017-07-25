@@ -6,7 +6,7 @@ import {
   FlashBuffer, FlashTimeRanges, MediaErrorCode, NetworkState, Option, PlayerError, PlayerEvent,
   ReadyState, SourceOption
 } from "./model";
-import {VideoElement} from "./interface";
+import {FlashElement, VideoElement} from "./interface";
 
 const styles = require('./player.scss');
 
@@ -65,16 +65,6 @@ const getFlashTemplate = (swf: string, flashVars: any, params: any, attributes: 
 
   return `${objTag}${attrsString}>${paramsString}</object>`;
 };
-
-interface FlashElement extends HTMLElement {
-  vjs_getProperty: (prop: any) => any;
-  vjs_setProperty: (prop: any, value: any) => void;
-  vjs_play: () => void;
-  vjs_pause: () => void;
-  vjs_load: () => void;
-  vjs_src: (src: string) => void;
-  instance: FlashVideo;
-}
 
 export class FlashVideo implements VideoElement {
   el: FlashElement;

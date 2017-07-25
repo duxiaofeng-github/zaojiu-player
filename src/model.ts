@@ -1,4 +1,4 @@
-import {parsePlayList, SWF_VERSION} from "./utils";
+import {parsePlayList} from "./utils";
 import {i18nCN} from "./i18n";
 
 export class FullScreenApi {

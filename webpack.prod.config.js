@@ -3,12 +3,13 @@ const path = require('path');
 const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const DtsBundlerPlugin = require('dtsbundler-webpack-plugin');
 
 module.exports = {
   entry: {
     'zaojiu-player': path.resolve(__dirname, './src/index.ts'),
-    'zaojiu-player-flash.plugin': path.resolve(__dirname, './src/flash.ts')
+    'zaojiu-player-flash.plugin': path.resolve(__dirname, './src/flash.ts'),
+    'zaojiu-player.min': path.resolve(__dirname, './src/index.ts'),
+    'zaojiu-player-flash.plugin.min': path.resolve(__dirname, './src/flash.ts')
   },
   output: {
     filename: "[name].js",
@@ -69,6 +70,8 @@ module.exports = {
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
     new webpack.optimize.UglifyJsPlugin({
+      parallel: true,
+      include: /.*?\.min\.js/i,
       output: {
         comments: false
       },
@@ -84,8 +87,5 @@ module.exports = {
     new CopyWebpackPlugin([
       {from: path.resolve(__dirname, './src/video-js.swf'), to: path.resolve(__dirname, './dist/video-js.swf')}
     ]),
-    new DtsBundlerPlugin({
-      out:'types/index.d.ts'
-    })
   ]
 };

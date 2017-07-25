@@ -5,6 +5,7 @@ import {createElementByString, IS_MOBILE} from "./utils";
 import {Controls} from "./controls";
 import {Subject} from "rxjs/Subject";
 import 'rxjs/add/operator/filter';
+import {Observable} from "rxjs/Observable";
 const styles = require('./player.scss');
 
 const ElementQueries = require('css-element-queries/src/ElementQueries');
@@ -18,7 +19,7 @@ export class ZaojiuPlayer implements BaseElement {
   video: VideoPlayer;
   controls: Controls;
   eventSource = new Subject<PlayerEvent>();
-  event$ = this.eventSource.asObservable();
+  event$: Observable<PlayerEvent> = this.eventSource.asObservable();
   option: Option;
   language = new Language('zh-CN');
   private containerPositionCache = '';
