@@ -75,9 +75,10 @@ export class ZaojiuPlayer implements BaseElement {
     this.video.render();
     this.controls.render();
 
-    const container = this.getTargetElement();
-    if (container.style.position !== 'relative' && container.style.position !== 'absolute') {
-      this.containerPositionCache = container.style.position;
+    const container: HTMLElement = this.getTargetElement();
+    const style: CSSStyleDeclaration = window.getComputedStyle ? getComputedStyle(container, null) : (<any>container)['currentStyle'];
+    if (style.position !== 'relative' && style.position !== 'absolute') {
+      this.containerPositionCache = style.position;
       container.style.position = 'relative';
     }
     container.innerHTML = '';

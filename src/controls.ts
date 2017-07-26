@@ -632,7 +632,6 @@ export class CurrentTimeControl implements BaseElement {
     this.event$ = event$;
     const elements = createElementByString(currentTimeTemplate);
     this.el = elements.item(0) as HTMLElement;
-
     this.bindEvent();
   }
 
@@ -725,7 +724,7 @@ export class DurationControl implements BaseElement {
         case 'durationchange':
           this.resetDuration(this.video.el.duration);
           break;
-        case 'reset':
+        case 'ready':
           const currentSrc = this.video.srcArray[this.video.currentIndex];
 
           if (currentSrc instanceof SourceOption && isRtmp(currentSrc)) {
