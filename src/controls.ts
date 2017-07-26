@@ -207,7 +207,7 @@ export class LoadingControl implements BaseElement {
     this.setLoadingMonitor();
   }
 
-  bindEvent() {
+  private bindEvent() {
     this.eventSub = this.event$.subscribe((e) => {
       switch (e.type) {
         case PlayerEventType.RetryPlay:
@@ -223,7 +223,7 @@ export class LoadingControl implements BaseElement {
     });
   }
 
-  setLoadingMonitor() {
+  private setLoadingMonitor() {
     let lastPostion = -1;
     let lastStuckTime = -1;
     let mediaErrorFired = false;
@@ -1291,9 +1291,9 @@ export class Controls implements BaseElement {
   loading: LoadingControl;
   error: ErrorControl;
   toolBar: ToolBarControl;
-  mouseMoveTimer: any;
-  event$: Observable<PlayerEvent>;
-  eventSub: Subscription;
+  private mouseMoveTimer: any;
+  private event$: Observable<PlayerEvent>;
+  private eventSub: Subscription;
 
   private container: BaseElement;
   private rendered: boolean;

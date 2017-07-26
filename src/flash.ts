@@ -76,7 +76,6 @@ export class FlashVideo implements VideoElement {
   private readyResolver: (() => void)[] = [];
   private listenerGroup: {[key: string]: ((e: any) => void)[]} = {};
   private timeupdateTimer: any;
-  private isNeedDelaySeeking = true;
 
   static onReady(swfID: string) {
     const el = document.getElementById(swfID) as FlashElement;
@@ -300,15 +299,7 @@ export class FlashVideo implements VideoElement {
 
       this.lastSeekTarget = time;
       this.handleEvent('seeking',null);
-
-      // if (this.isNeedDelaySeeking) {
-      //   // Set current time when initializing would never trigger seeked event.
-      //   // So delay 500ms to prevent this bug.
-      //   setTimeout(() => this.propertySetter('currentTime', time), 1000);
-      //   setTimeout(() => this.isNeedDelaySeeking = false, 1000);
-      // } else {
-        this.propertySetter('currentTime', time);
-      // }
+      this.propertySetter('currentTime', time);
     }
   }
 
