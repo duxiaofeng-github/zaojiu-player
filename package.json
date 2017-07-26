@@ -5,8 +5,9 @@
   "main": "dist/zaojiu-player.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cd example && ../node_modules/.bin/webpack-dev-server --config ./webpack.config.js",
-    "build": "rm -rf dist && ./node_modules/.bin/webpack --config ./webpack.prod.config.js"
+    "dev": "./node_modules/.bin/webpack-dev-server --config ./example/webpack.config.js",
+    "build": "rm -rf dist && ./node_modules/.bin/webpack --config ./webpack.prod.config.js",
+    "publish": "rm -rf dist && ./node_modules/.bin/webpack --config ./webpack.prod.config.js && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,7 @@
   "types": "types/index.d.ts",
   "devDependencies": {
     "@types/hls.js": "^0.7.4",
-    "@types/node": "^8.0.13",
+    "@types/node": "^8.0.16",
     "autoprefixer": "^7.1.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.4",
