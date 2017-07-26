@@ -277,4 +277,4 @@ declare module 'zaojiu-player' {
   export = ZaojiuPlayerStatic;
 }
 
-declare var ZaojiuPlayer: ZaojiuPlayerStatic;
+declare const ZaojiuPlayer: ZaojiuPlayerStatic;
