@@ -511,5 +511,3 @@ export class FlashVideo implements VideoElement {
 if ((<any>window).ZaojiuPlayer && !(<any>window).ZaojiuPlayer.FlashVideo) {
   (<any>window).ZaojiuPlayer.FlashVideo = FlashVideo;
 }
-
-export default FlashVideo;
