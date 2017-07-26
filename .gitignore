@@ -63,5 +63,4 @@ typings/
 
 example/*.js
 example/*.map
-dist/
-
+yarn-error.log
