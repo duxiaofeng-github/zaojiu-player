@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "./node_modules/.bin/webpack-dev-server --config ./example/webpack.config.js",
     "build": "rm -rf dist && ./node_modules/.bin/webpack --config ./webpack.prod.config.js",
-    "publish": "rm -rf dist && ./node_modules/.bin/webpack --config ./webpack.prod.config.js && npm version patch && npm publish"
+    "pub": "rm -rf dist && ./node_modules/.bin/webpack --config ./webpack.prod.config.js && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
