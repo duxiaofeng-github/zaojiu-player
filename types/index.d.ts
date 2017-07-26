@@ -169,14 +169,14 @@ interface Language {
   }): void;
   translate(string: string): string;
 }
-enum ReadyState {
+declare enum ReadyState {
   HAVE_NOTHING = 0,
   HAVE_METADATA = 1,
   HAVE_CURRENT_DATA = 2,
   HAVE_FUTURE_DATA = 3,
   HAVE_ENOUGH_DATA = 4,
 }
-enum NetworkState {
+declare enum NetworkState {
   NETWORK_EMPTY = 0,
   NETWORK_IDLE = 1,
   NETWORK_LOADING = 2,
@@ -185,13 +185,13 @@ enum NetworkState {
 interface PlayerError {
   code: MediaErrorCode;
 }
-enum MediaErrorCode {
+declare enum MediaErrorCode {
   MEDIA_ERR_ABORTED = 1,
   MEDIA_ERR_NETWORK = 2,
   MEDIA_ERR_DECODE = 3,
   MEDIA_ERR_SRC_NOT_SUPPORTED = 4,
 }
-enum VideoErrorType {
+declare enum VideoErrorType {
   EnvError = 1,
   VideoSourceError = 2,
   NetworkError = 3,
@@ -217,7 +217,7 @@ interface FullScreenApi {
   fullscreenElement: HTMLElement;
   fullscreenEnabled: boolean;
 }
-enum PlayerEventType {
+declare enum PlayerEventType {
   SourceChange = "sourcechange",
   RetryPlay = "retryplay",
 }
@@ -245,7 +245,7 @@ interface SourceOption {
   quality: string;
   minetype: string;
 }
-interface Option {
+export interface Option {
   element: string | HTMLElement;
   playList: (SourceOption | MediaSource)[][];
   autoplay: boolean;
@@ -255,7 +255,7 @@ interface Option {
   swf: string;
 }
 
-interface ZaojiuPlayerInstance {
+export interface ZaojiuPlayerInstance {
   el: HTMLElement;
   video: VideoPlayer;
   controls: Controls;
@@ -269,12 +269,8 @@ interface ZaojiuPlayerInstance {
   destroy(): void;
 }
 
-interface ZaojiuPlayerStatic {
+export interface ZaojiuPlayer {
   new (option: Option | any): ZaojiuPlayerInstance;
 }
-
-declare module 'zaojiu-player' {
-  export = ZaojiuPlayerStatic;
-}
-
-declare const ZaojiuPlayer: ZaojiuPlayerStatic;
+export as namespace ZaojiuPlayer;
+export default ZaojiuPlayer;
