@@ -17,6 +17,12 @@ $color-primary: #00D7C6;
   -webkit-overflow-scrolling: touch;
   user-select: none;
 
+  * {
+    box-sizing: content-box;
+    padding: 0;
+    margin: 0;
+  }
+
   &[max-width~="414px"] {
     .controls .toolBar {
       .currentTime, .duration, .quality {
