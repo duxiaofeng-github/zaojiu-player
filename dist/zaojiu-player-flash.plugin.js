@@ -1120,7 +1120,6 @@ var FlashVideo = (function () {
         this.isReady = false;
         this.readyResolver = [];
         this.listenerGroup = {};
-        this.isNeedDelaySeeking = true;
         this.opt = opt;
         this.createEl();
     }
@@ -1354,14 +1353,7 @@ var FlashVideo = (function () {
                 time = time < seekable.end(seekable.length - 1) ? time : seekable.end(seekable.length - 1);
                 this.lastSeekTarget = time;
                 this.handleEvent('seeking', null);
-                // if (this.isNeedDelaySeeking) {
-                //   // Set current time when initializing would never trigger seeked event.
-                //   // So delay 500ms to prevent this bug.
-                //   setTimeout(() => this.propertySetter('currentTime', time), 1000);
-                //   setTimeout(() => this.isNeedDelaySeeking = false, 1000);
-                // } else {
                 this.propertySetter('currentTime', time);
-                // }
             }
         },
         enumerable: true,
