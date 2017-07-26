@@ -255,7 +255,7 @@ interface Option {
   swf: string;
 }
 
-interface ZaojiuPlayerStatic {
+interface ZaojiuPlayerInstance {
   el: HTMLElement;
   video: VideoPlayer;
   controls: Controls;
@@ -265,13 +265,16 @@ interface ZaojiuPlayerStatic {
   language: Language;
   FlashVideo?: any;
   use(plugin: any): void;
-  constructor(option: Option | any);
   render(): void;
   destroy(): void;
+}
+
+interface ZaojiuPlayerStatic {
+  new (option: Option | any): ZaojiuPlayerInstance;
 }
 
 declare module 'zaojiu-player' {
   export = ZaojiuPlayerStatic;
 }
 
-declare const ZaojiuPlayer: ZaojiuPlayerStatic;
+declare var ZaojiuPlayer: ZaojiuPlayerStatic;
