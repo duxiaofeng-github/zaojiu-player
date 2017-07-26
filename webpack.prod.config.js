@@ -7,13 +7,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     'zaojiu-player': path.resolve(__dirname, './src/index.ts'),
-    'zaojiu-player-flash.plugin': path.resolve(__dirname, './src/flash.ts'),
     'zaojiu-player.min': path.resolve(__dirname, './src/index.ts'),
+    'zaojiu-player-flash.plugin': path.resolve(__dirname, './src/flash.ts'),
     'zaojiu-player-flash.plugin.min': path.resolve(__dirname, './src/flash.ts')
   },
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, './dist')
+    path: path.resolve(__dirname, './dist'),
+    library: "ZaojiuPlayer",
+    libraryTarget: "umd"
   },
 
   // Enable sourcemaps for debugging webpack's output.

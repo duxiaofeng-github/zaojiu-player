@@ -98,5 +98,3 @@ export class ZaojiuPlayer implements BaseElement {
     this.elementQueries.detach();
   }
 }
-
-if (!(<any>window).ZaojiuPlayer) (<any>window).ZaojiuPlayer = ZaojiuPlayer;
