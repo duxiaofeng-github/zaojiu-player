@@ -182,9 +182,6 @@ declare enum NetworkState {
   NETWORK_LOADING = 2,
   NETWORK_NO_SOURCE = 3,
 }
-interface PlayerError {
-  code: MediaErrorCode;
-}
 declare enum MediaErrorCode {
   MEDIA_ERR_ABORTED = 1,
   MEDIA_ERR_NETWORK = 2,
@@ -217,19 +214,18 @@ interface FullScreenApi {
   fullscreenElement: HTMLElement;
   fullscreenEnabled: boolean;
 }
-declare enum PlayerEventType {
+export declare enum PlayerEventType {
   SourceChange = "sourcechange",
   RetryPlay = "retryplay",
 }
-interface PlayerEvent {
-  type: PlayerEventType | string;
-  detail: any;
+export interface PlayerError {
+  code: MediaErrorCode;
 }
-interface VideoSourceChangeEventDetail {
+export interface VideoSourceChangeEventDetail {
   srcArray: (SourceOption | MediaSource)[];
   currentIndex: number;
 }
-interface ControlsOption {
+export interface ControlsOption {
   showBigPlay: boolean;
   showPlayPause: boolean;
   showProgressBar: boolean;
@@ -240,10 +236,14 @@ interface ControlsOption {
   readonly hasControls: boolean;
   readonly hasToolBarControls: boolean;
 }
-interface SourceOption {
+export interface SourceOption {
   src: string;
   quality: string;
   minetype: string;
+}
+export interface PlayerEvent {
+  type: PlayerEventType | string;
+  detail: any;
 }
 export interface Option {
   element: string | HTMLElement;
