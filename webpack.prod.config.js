@@ -89,5 +89,6 @@ module.exports = {
     new CopyWebpackPlugin([
       {from: path.resolve(__dirname, './src/video-js.swf'), to: path.resolve(__dirname, './dist/video-js.swf')}
     ]),
+    new webpack.optimize.ModuleConcatenationPlugin() // bootstrap optimize. detail: https://medium.com/webpack/brief-introduction-to-scope-hoisting-in-webpack-8435084c171f
   ]
 };
