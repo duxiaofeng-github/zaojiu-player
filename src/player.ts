@@ -52,11 +52,9 @@ export class ZaojiuPlayer implements BaseElement {
   }
 
   private getTargetElement() {
-    if (this.option.element instanceof HTMLElement) {
-      return this.option.element;
-    }
-
-    return document.getElementById(this.option.element as string);
+    const ele = this.option.element instanceof HTMLElement ? this.option.element : document.getElementById(this.option.element as string);
+    if (!ele) throw new Error('can not found target element');
+    return ele;
   }
 
   private prepareControls() {
