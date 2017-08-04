@@ -2,7 +2,7 @@
   "name": "zaojiu-player",
   "version": "2.0.10",
   "description": "video player for xingshu co., ltd.",
-  "main": "dist/zaojiu-player.min.js",
+  "main": "dist/zaojiu-player.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "./node_modules/.bin/webpack-dev-server --config ./example/webpack.config.js",
@@ -45,7 +45,7 @@
     "style-loader": "^0.18.2",
     "ts-loader": "^2.3.0",
     "typescript": "^2.4.1",
-    "webpack": "^3.0.0",
+    "webpack": "^3.4.1",
     "webpack-dev-server": "^2.5.0"
   }
 }
