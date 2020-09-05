@@ -57,7 +57,7 @@ const player = new ZaojiuPlayer({
   element: "player",
   playList: [srcSD, srcMD, srcHD],
   autoplay: true,
-  swf: "example/video-js.swf",
+  swf: "static/video-js.swf",
 });
 
 // you can control video player by using its instance
