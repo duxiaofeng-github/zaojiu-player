@@ -1,6 +1,6 @@
 {
   "name": "zaojiu-player",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "video player for xingshu co., ltd.",
   "main": "dist/zaojiu-player.js",
   "scripts": {
