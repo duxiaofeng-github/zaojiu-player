@@ -64,8 +64,9 @@ typings/
 example/
 video-js-swf/
 src/
+types/
 yarn.lock
-webpack.prod.config.js
+webpack.config.js
 tsconfig.json
 .gitignore
-.editorconfig
+.prettierrc

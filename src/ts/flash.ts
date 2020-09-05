@@ -1,14 +1,8 @@
-import {
-  createElementByString, genRandomID, getAbsoluteURL, canPlayTypeByFlash,
-  isRtmp
-} from "./utils";
-import {
-  FlashBuffer, FlashTimeRanges, MediaErrorCode, NetworkState, Option, PlayerError, PlayerEvent,
-  ReadyState, SourceOption
-} from "./model";
-import {FlashElement, VideoElement} from "./interface";
+import { createElementByString, genRandomID, getAbsoluteURL, canPlayTypeByFlash, isRtmp } from "./utils";
+import { FlashBuffer, FlashTimeRanges, MediaErrorCode, NetworkState, Option, PlayerError, PlayerEvent, ReadyState, SourceOption } from "./model";
+import { FlashElement, VideoElement } from "./interface";
 
-const styles = require('./player.scss');
+import * as styles from "../scss/player.scss";
 
 const parseRtmpSrc = (src: string): string[] => {
   if (!src) {
@@ -21,7 +15,7 @@ const parseRtmpSrc = (src: string): string[] => {
   if (connEnd !== -1) {
     streamBegin = connEnd + 1;
   } else {
-    connEnd = streamBegin = src.lastIndexOf('/') + 1;
+    connEnd = streamBegin = src.lastIndexOf("/") + 1;
     if (connEnd === 0) {
       connEnd = streamBegin = src.length;
     }
@@ -31,34 +25,39 @@ const parseRtmpSrc = (src: string): string[] => {
   const stream = src.substring(streamBegin, src.length);
 
   return [connection, stream];
-}
+};
 
 const getFlashTemplate = (swf: string, flashVars: any, params: any, attributes: any) => {
   const objTag = '<object type="application/x-shockwave-flash" ';
-  let flashVarsString = '';
-  let paramsString = '';
-  let attrsString = '';
+  let flashVarsString = "";
+  let paramsString = "";
+  let attrsString = "";
   if (flashVars) {
     Object.getOwnPropertyNames(flashVars).forEach(function (key) {
       flashVarsString += `${key}=${flashVars[key]}&amp;`;
     });
   }
-  params = Object.assign({
-    movie: swf,
-    flashvars: flashVarsString,
-    allowScriptAccess: 'always',
-    allowNetworking: 'all'
-  }, params);
+  params = Object.assign(
+    {
+      movie: swf,
+      flashvars: flashVarsString,
+      allowScriptAccess: "always",
+      allowNetworking: "all",
+    },
+    params
+  );
   Object.getOwnPropertyNames(params).forEach(function (key) {
     paramsString += `<param name="${key}" value="${params[key]}" />`;
   });
 
-  attributes = Object.assign({
-    data: swf,
-    width: '100%',
-    height: '100%'
-
-  }, attributes);
+  attributes = Object.assign(
+    {
+      data: swf,
+      width: "100%",
+      height: "100%",
+    },
+    attributes
+  );
   Object.getOwnPropertyNames(attributes).forEach(function (key) {
     attrsString += `${key}="${attributes[key]}" `;
   });
@@ -67,14 +66,14 @@ const getFlashTemplate = (swf: string, flashVars: any, params: any, attributes: 
 };
 
 export class FlashVideo implements VideoElement {
-  el: FlashElement;
-  error: PlayerError;
+  el?: FlashElement;
+  error: PlayerError | null = null;
   private opt: Option;
   private lastSeekTarget = -1;
   private isReady = false;
-  private sourceBeforeReady: SourceOption;
+  private sourceBeforeReady?: SourceOption;
   private readyResolver: (() => void)[] = [];
-  private listenerGroup: {[key: string]: ((e: any) => void)[]} = {};
+  private listenerGroup: { [key: string]: ((e: any) => void)[] } = {};
   private timeupdateTimer: any;
 
   static onReady(swfID: string) {
@@ -83,7 +82,9 @@ export class FlashVideo implements VideoElement {
 
     // and the tech element was removed from the player div
     if (instance && instance.el && instance.el.vjs_getProperty) {
-      setTimeout(function () {instance.handleReady()}, 1000);
+      setTimeout(function () {
+        instance.handleReady();
+      }, 1000);
     } else {
       setTimeout(() => instance.handleReady(), 1000); // recheck in one second
     }
@@ -130,7 +131,7 @@ export class FlashVideo implements VideoElement {
       this.setRtmpSrc(src.src);
     } else {
       const srcParsed = getAbsoluteURL(src.src);
-      this.el.vjs_src(srcParsed);
+      this.el!.vjs_src(srcParsed);
     }
 
     if (this.opt.autoplay) {
@@ -146,16 +147,16 @@ export class FlashVideo implements VideoElement {
     const objId = `zaojiu-flash-player-${genRandomID()}`;
 
     const flashVars = {
-      readyFunction: 'ZaojiuPlayer.FlashVideo.onReady',
-      eventProxyFunction: 'ZaojiuPlayer.FlashVideo.onEvent',
-      errorEventProxyFunction: 'ZaojiuPlayer.FlashVideo.onError',
+      readyFunction: "ZaojiuPlayer.FlashVideo.onReady",
+      eventProxyFunction: "ZaojiuPlayer.FlashVideo.onEvent",
+      errorEventProxyFunction: "ZaojiuPlayer.FlashVideo.onError",
       autoplay: options.autoplay,
       preload: options.preload,
       loop: options.loop,
     };
     const params = {
-      wmode: 'opaque',
-      bgcolor: '#000000',
+      wmode: "opaque",
+      bgcolor: "#000000",
     };
     const attributes = {
       id: objId,
@@ -169,12 +170,12 @@ export class FlashVideo implements VideoElement {
 
   private propertySetter(property: string, value: any) {
     if (this.isReady) {
-      this.el.vjs_setProperty(property, value);
+      this.el!.vjs_setProperty(property, value);
     } else {
-      (new Promise((resolve, reject) => {
+      new Promise((resolve, reject) => {
         this.readyResolver.push(resolve);
-      })).then(() => {
-        this.el.vjs_setProperty(property, value);
+      }).then(() => {
+        this.el!.vjs_setProperty(property, value);
       });
     }
   }
@@ -190,7 +191,7 @@ export class FlashVideo implements VideoElement {
 
       if (this.currentTime !== timeCache) {
         timeCache = this.currentTime;
-        this.handleEvent('timeupdate', '');
+        this.handleEvent("timeupdate", "");
       }
     }, 1000);
   }
@@ -209,7 +210,7 @@ export class FlashVideo implements VideoElement {
 
   canPlayType(type: string): string {
     return FlashVideo.canPlayType(type);
-  };
+  }
 
   get seeking() {
     return this.lastSeekTarget !== -1;
@@ -219,7 +220,7 @@ export class FlashVideo implements VideoElement {
     if (this.readyState === ReadyState.HAVE_NOTHING) {
       return NaN;
     }
-    const duration = this.propertyGetter('duration') || 0;
+    const duration = this.propertyGetter("duration") || 0;
 
     return duration >= 0 ? duration : Infinity;
   }
@@ -234,7 +235,7 @@ export class FlashVideo implements VideoElement {
   }
 
   get buffered(): FlashTimeRanges {
-    const ranges = this.propertyGetter('buffered') || null;
+    const ranges = this.propertyGetter("buffered") || null;
 
     if (!ranges || ranges.length === 0) {
       return new FlashTimeRanges(new FlashBuffer(0, 0));
@@ -250,25 +251,25 @@ export class FlashVideo implements VideoElement {
   }
 
   get ended(): boolean {
-    return !!this.propertyGetter('ended');
+    return !!this.propertyGetter("ended");
   }
 
   get paused(): boolean {
-    return !!this.propertyGetter('paused');
+    return !!this.propertyGetter("paused");
   }
 
   get networkState(): NetworkState {
-    return this.propertyGetter('networkState') || NetworkState.NETWORK_EMPTY;
+    return this.propertyGetter("networkState") || NetworkState.NETWORK_EMPTY;
   }
 
   get readyState(): ReadyState {
-    return this.propertyGetter('readyState') || ReadyState.HAVE_NOTHING;
+    return this.propertyGetter("readyState") || ReadyState.HAVE_NOTHING;
   }
 
   // read write properties -------------------------------------------
 
   get src(): SourceOption {
-    return this.propertyGetter('currentSrc');
+    return this.propertyGetter("currentSrc");
   }
 
   set src(src: SourceOption) {
@@ -278,8 +279,8 @@ export class FlashVideo implements VideoElement {
         this.readyResolver.push(resolve);
       });
       ready.then(() => {
-        this.setSrc(this.sourceBeforeReady);
-        this.sourceBeforeReady = null;
+        this.setSrc(this.sourceBeforeReady!);
+        this.sourceBeforeReady = undefined;
       });
     } else {
       this.setSrc(src);
@@ -287,7 +288,7 @@ export class FlashVideo implements VideoElement {
   }
 
   get currentTime(): number {
-    return this.seeking ? this.lastSeekTarget : (this.propertyGetter('currentTime') || 0);
+    return this.seeking ? this.lastSeekTarget : this.propertyGetter("currentTime") || 0;
   }
 
   set currentTime(time: number) {
@@ -298,96 +299,95 @@ export class FlashVideo implements VideoElement {
       time = time < seekable.end(seekable.length - 1) ? time : seekable.end(seekable.length - 1);
 
       this.lastSeekTarget = time;
-      this.handleEvent('seeking',null);
-      this.propertySetter('currentTime', time);
+      this.handleEvent("seeking", null);
+      this.propertySetter("currentTime", time);
     }
   }
 
   get autoplay(): boolean {
-    return this.propertyGetter('autoplay') || false;
+    return this.propertyGetter("autoplay") || false;
   }
 
   set autoplay(isAutoPlay: boolean) {
-    this.propertySetter('autoplay', isAutoPlay);
+    this.propertySetter("autoplay", isAutoPlay);
   }
 
   get preload(): string {
-    return this.propertyGetter('preload') || '';
+    return this.propertyGetter("preload") || "";
   }
 
   set preload(preload: string) {
-    this.propertySetter('preload', preload);
+    this.propertySetter("preload", preload);
   }
 
   get loop(): boolean {
-    return this.propertyGetter('loop') || '';
+    return this.propertyGetter("loop") || "";
   }
 
   set loop(loop: boolean) {
-    this.propertySetter('loop', loop);
+    this.propertySetter("loop", loop);
   }
 
   get volume(): number {
-    return this.propertyGetter('volume') || 0;
+    return this.propertyGetter("volume") || 0;
   }
 
   set volume(volume: number) {
-    this.propertySetter('volume', volume);
+    this.propertySetter("volume", volume);
   }
 
   get muted(): boolean {
-    return this.propertyGetter('muted') || false;
+    return this.propertyGetter("muted") || false;
   }
 
   set muted(muted: boolean) {
-    this.propertySetter('muted', muted);
+    this.propertySetter("muted", muted);
   }
 
   get defaultMuted(): boolean {
-    return this.propertyGetter('defaultMuted') || false;
+    return this.propertyGetter("defaultMuted") || false;
   }
 
   set defaultMuted(defaultMuted: boolean) {
-    this.propertySetter('defaultMuted', defaultMuted);
+    this.propertySetter("defaultMuted", defaultMuted);
   }
 
   get playbackRate(): number {
-    return this.propertyGetter('playbackRate') || 1;
+    return this.propertyGetter("playbackRate") || 1;
   }
 
   set playbackRate(playbackRate: number) {
-    this.propertySetter('playbackRate', playbackRate);
+    this.propertySetter("playbackRate", playbackRate);
   }
 
   get defaultPlaybackRate(): number {
-    return this.propertyGetter('defaultPlaybackRate') || 1;
+    return this.propertyGetter("defaultPlaybackRate") || 1;
   }
 
   set defaultPlaybackRate(defaultPlaybackRate: number) {
-    this.propertySetter('defaultPlaybackRate', defaultPlaybackRate);
+    this.propertySetter("defaultPlaybackRate", defaultPlaybackRate);
   }
 
   get poster(): string {
-    return this.propertyGetter('poster') || '';
+    return this.propertyGetter("poster") || "";
   }
 
-  set poster(poster: string) {
-  }
+  set poster(poster: string) {}
 
   get rtmpConnection(): string {
-    return this.propertyGetter('rtmpConnection') || '';
+    return this.propertyGetter("rtmpConnection") || "";
   }
 
   set rtmpConnection(connection: string) {
-    this.propertySetter('rtmpConnection', connection);
+    this.propertySetter("rtmpConnection", connection);
   }
 
   get rtmpStream(): string {
-    return this.propertyGetter('rtmpStream') || '';
+    return this.propertyGetter("rtmpStream") || "";
   }
 
   set rtmpStream(stream: string) {
-    this.propertySetter('rtmpStream', stream);
+    this.propertySetter("rtmpStream", stream);
   }
 
   // TODO: remain property
@@ -403,7 +403,7 @@ export class FlashVideo implements VideoElement {
 
     const listenerArr = this.listenerGroup[type] || [];
 
-    const has = listenerArr.find(l => l === listener);
+    const has = listenerArr.find((l) => l === listener);
     if (!has) {
       listenerArr.push(listener);
     }
@@ -451,18 +451,18 @@ export class FlashVideo implements VideoElement {
     //
     // public static const ON_TEXT_DATA:String = "textdata";
 
-    if (eventName === 'seeked') this.lastSeekTarget = -1;
+    if (eventName === "seeked") this.lastSeekTarget = -1;
 
     // flash loop option not woking~~
-    if (eventName === 'ended' && !this.opt.loop) this.pause();
+    if (eventName === "ended" && !this.opt.loop) this.pause();
 
     const listenerArr = this.listenerGroup[eventName] || [];
     if (listenerArr.length) {
-      listenerArr.forEach(listener => {
+      listenerArr.forEach((listener) => {
         let handler;
-        if (typeof listener === 'function') {
+        if (typeof listener === "function") {
           handler = listener;
-        } else if (listener && typeof (<any>listener).handleEvent === 'function') {
+        } else if (listener && typeof (<any>listener).handleEvent === "function") {
           handler = (<any>listener).handleEvent;
         }
         if (handler) handler(new PlayerEvent(eventName, args));
@@ -474,13 +474,13 @@ export class FlashVideo implements VideoElement {
     this.isReady = true;
 
     if (this.readyResolver && this.readyResolver.length) {
-      this.readyResolver.forEach(resolve => resolve());
+      this.readyResolver.forEach((resolve) => resolve());
       this.readyResolver = [];
     }
 
     this.initTimeChecker();
 
-    this.handleEvent('ready', '');
+    this.handleEvent("ready", "");
   }
 
   handleError(err: string) {
@@ -491,20 +491,22 @@ export class FlashVideo implements VideoElement {
     // public static const PROPERTY_NOT_FOUND:String = "propertynotfound";
     // public static const UNSUPPORTED_MODE:String = "unsupportedmode";
     switch (err) {
-      case 'srcnotset':
-      case 'srcnotfound':
+      case "srcnotset":
+      case "srcnotfound":
         this.error = new PlayerError(MediaErrorCode.MEDIA_ERR_SRC_NOT_SUPPORTED);
         break;
-      case 'rtmpconnectfailure':
+      case "rtmpconnectfailure":
         this.error = new PlayerError(MediaErrorCode.MEDIA_ERR_NETWORK);
         break;
     }
 
-    this.handleEvent('error', err);
+    this.handleEvent("error", err);
   }
 
   remove() {
-    this.el.remove();
+    if (this.el) {
+      this.el.remove();
+    }
   }
 }
 

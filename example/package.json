@@ -1,0 +1,34 @@
+{
+  "name": "zaojiu-player-example",
+  "version": "0.0.1",
+  "description": "video player for xingshu co., ltd.",
+  "scripts": {
+    "dev": "webpack-dev-server",
+    "build": "rm -rf dist && NODE_ENV=production webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duxiaofeng-github/zaojiu-player.git"
+  },
+  "keywords": [
+    "video-player"
+  ],
+  "author": "duxiaofeng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/duxiaofeng-github/zaojiu-player/issues"
+  },
+  "homepage": "https://github.com/duxiaofeng-github/zaojiu-player#readme",
+  "dependencies": {
+    "zaojiu-player": "file:.."
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^6.1.0",
+    "html-webpack-plugin": "^4.4.1",
+    "ts-loader": "^8.0.3",
+    "typescript": "^4.0.2",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}

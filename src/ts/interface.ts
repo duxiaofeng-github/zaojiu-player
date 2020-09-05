@@ -1,5 +1,5 @@
-import {NetworkState, PlayerError, ReadyState, SourceOption} from "./model";
-import {FlashVideo} from "./flash";
+import { NetworkState, PlayerError, ReadyState, SourceOption } from "./model";
+import { FlashVideo } from "./flash";
 
 export interface BaseElement {
   el: HTMLElement;
@@ -13,13 +13,13 @@ export interface VideoElement {
   readonly readyState: ReadyState;
   readonly paused: boolean;
   readonly ended: boolean;
-  readonly error: PlayerError;
+  readonly error: PlayerError | null;
   readonly duration: number;
   readonly buffered: TimeRanges;
   autoplay: boolean;
   preload: string;
   loop: boolean;
-  src: string|MediaSource|SourceOption;
+  src: string | MediaSource | SourceOption | null;
   volume: number;
   currentTime: number;
   seeking: boolean;

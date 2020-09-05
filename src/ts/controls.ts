@@ -1,19 +1,24 @@
+import { createElementByString, getTouchTarget, HAS_MOUSE_EVENT, IS_ANDROID, IS_IOS, IS_SUPPORT_MSE, isRtmp, parsePercent, secondToMMSS } from "./utils";
+import { BaseElement } from "./interface";
 import {
-  createElementByString, getTouchTarget, HAS_MOUSE_EVENT, IS_ANDROID, IS_IOS, IS_SUPPORT_MSE, isRtmp, parsePercent,
-  secondToMMSS
-} from "./utils";
-import {BaseElement} from "./interface";
-import {
-  ControlsOption, PlayerEvent, PlayerEventType, FullScreenApi, Language, NetworkState, Option, ReadyState,
-  SourceOption, VideoErrorType,
-  VideoSourceChangeEventDetail
+  ControlsOption,
+  PlayerEvent,
+  PlayerEventType,
+  FullScreenApi,
+  Language,
+  NetworkState,
+  Option,
+  ReadyState,
+  SourceOption,
+  VideoErrorType,
+  VideoSourceChangeEventDetail,
 } from "./model";
-import {ZaojiuPlayer} from "./player";
-import {Subscription} from "rxjs/Subscription";
-import {Observable} from "rxjs/Observable";
-import {Subject} from "rxjs/Subject";
-import {VideoPlayer} from "./video";
-const styles = require('./player.scss');
+import { ZaojiuPlayer } from "./player";
+import { Subscription } from "rxjs/Subscription";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+import { VideoPlayer } from "./video";
+import * as styles from "../scss/player.scss";
 
 const bigPlayBtnTemplate = `
   <svg class="${styles.bigPlay}" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path d="M0 30.006C0 46.582 13.44 60 30 60c16.56 0 30-13.43 30-30.006S46.56 0 30 0C13.44 0 0 13.43 0 30.006z" id="b"/><filter x="-6.2%" y="-6.2%" width="112.5%" height="112.5%" filterUnits="objectBoundingBox" id="a"><feMorphology radius=".75" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"/><feOffset in="shadowSpreadOuter1" result="shadowOffsetOuter1"/><feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"/><feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/><feColorMatrix values="0 0 0 0 0.563190901 0 0 0 0 0.563190901 0 0 0 0 0.563190901 0 0 0 1 0" in="shadowBlurOuter1"/></filter></defs><g fill="none" fill-rule="evenodd"><g transform="translate(3 3)"><use fill="#000" filter="url(#a)" xlink:href="#b"/><use stroke="#FFF" stroke-width="1.5" fill-opacity=".3" fill="#FFF" xlink:href="#b"/></g><path d="M29.257 20.7c-.215-.24-.526-.395-.872-.395-.25 0-.49.084-.682.215-.06.036-.108.084-.155.132-.287.287-.395.682-.323 1.052V44.32c-.072.37.036.765.323 1.052.454.454 1.195.454 1.65 0L44.18 33.855c.227-.227.347-.538.335-.85 0-.31-.108-.61-.335-.848L29.257 20.7z" fill="#FFF"/></g></svg>
@@ -25,7 +30,7 @@ export class BigPlayBtnControl implements BaseElement {
   private video: VideoPlayer;
   private event$: Observable<PlayerEvent>;
   private eventSub: Subscription;
-  private rendered: boolean;
+  private rendered = false;
 
   constructor(container: BaseElement, video: VideoPlayer, event$: Observable<PlayerEvent>) {
     this.container = container;
@@ -33,36 +38,32 @@ export class BigPlayBtnControl implements BaseElement {
     const elements = createElementByString(bigPlayBtnTemplate);
     this.el = elements.item(0) as HTMLElement;
     this.event$ = event$;
-    this.bindEvent();
-  }
-
-  private bindEvent() {
-    this.eventSub = this.event$.subscribe(e => {
-      if (e.type === 'play') {
+    this.eventSub = this.event$.subscribe((e) => {
+      if (e.type === "play") {
         this.hide();
-      } else if (e.type === 'reset') {
+      } else if (e.type === "reset") {
         this.hide();
-      } else if (e.type === 'ready' || e.type === 'error') {
+      } else if (e.type === "ready" || e.type === "error") {
         this.show();
       }
     });
 
-    this.el.addEventListener('click', () => {
+    this.el.addEventListener("click", () => {
       this.hide();
       if (this.video.el) this.video.el.play();
     });
   }
 
   private hide() {
-    this.el.style.display = 'none';
+    this.el.style.display = "none";
   }
 
   private show() {
-    this.el.style.display = 'block';
+    this.el.style.display = "block";
   }
 
   render() {
-    if (this.rendered) throw new Error('big play btn control already rendered');
+    if (this.rendered) throw new Error("big play btn control already rendered");
 
     this.container.el.appendChild(this.el);
 
@@ -70,7 +71,7 @@ export class BigPlayBtnControl implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('big play btn control haven\'t render');
+    if (!this.rendered) throw new Error("big play btn control haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -100,7 +101,7 @@ export class ErrorControl implements BaseElement {
   private container: BaseElement;
   private video: VideoPlayer;
   private errorMessageEl: HTMLElement;
-  private rendered: boolean;
+  private rendered = false;
   private lang: Language;
   private event$: Observable<PlayerEvent>;
   private eventSource: Subject<PlayerEvent>;
@@ -115,15 +116,10 @@ export class ErrorControl implements BaseElement {
     this.lang = lang;
     this.event$ = event$;
     this.eventSource = eventSource;
-    this.hide();
-    this.bindEvent();
-  }
-
-  private bindEvent() {
     this.eventSub = this.event$.subscribe((e) => {
-      if (e.type === 'error') {
-        this.errorMessageEl.innerHTML = '';
-        let msgTemplate = '';
+      if (e.type === "error") {
+        this.errorMessageEl.innerHTML = "";
+        let msgTemplate = "";
 
         switch (e.detail) {
           case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
@@ -145,28 +141,30 @@ export class ErrorControl implements BaseElement {
         }
 
         this.errorMessageEl.innerHTML = this.lang.translate(msgTemplate);
-        this.el.style.display = 'flex';
-      } else if (e.type === 'play') {
+        this.el.style.display = "flex";
+      } else if (e.type === "play") {
         this.hide();
       }
     });
 
-    this.errorMessageEl.addEventListener('click', (e) => {
+    this.errorMessageEl.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
-      if (target.className === 'retry') {
+      if (target.className === "retry") {
         this.hide();
         this.eventSource.next(new PlayerEvent(PlayerEventType.RetryPlay, null));
         e.stopPropagation();
       }
     });
+
+    this.hide();
   }
 
   private hide() {
-    this.el.style.display = 'none';
+    this.el.style.display = "none";
   }
 
   render() {
-    if (this.rendered) throw new Error('error control already rendered');
+    if (this.rendered) throw new Error("error control already rendered");
 
     this.container.el.appendChild(this.el);
 
@@ -174,7 +172,7 @@ export class ErrorControl implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('error control haven\'t render');
+    if (!this.rendered) throw new Error("error control haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -189,12 +187,12 @@ export class LoadingControl implements BaseElement {
   el: HTMLElement;
   private video: VideoPlayer;
   private container: BaseElement;
-  private rendered: boolean;
+  private rendered = false;
   private loadingMonitor: any;
   private event$: Observable<PlayerEvent>;
   private eventSource: Subject<PlayerEvent>;
   private eventSub: Subscription;
-  private isPlayed: boolean;
+  private isPlayed = false;
 
   constructor(container: BaseElement, video: VideoPlayer, event$: Observable<PlayerEvent>, eventSource: Subject<PlayerEvent>) {
     this.container = container;
@@ -203,24 +201,20 @@ export class LoadingControl implements BaseElement {
     this.video = video;
     this.event$ = event$;
     this.eventSource = eventSource;
-    this.bindEvent();
-    this.setLoadingMonitor();
-  }
-
-  private bindEvent() {
     this.eventSub = this.event$.subscribe((e) => {
       switch (e.type) {
         case PlayerEventType.RetryPlay:
           this.setLoadingMonitor();
           break;
-        case 'ended':
+        case "ended":
           this.isPlayed = false;
           break;
-        case 'playing':
+        case "playing":
           this.isPlayed = true;
           break;
       }
     });
+    this.setLoadingMonitor();
   }
 
   private setLoadingMonitor() {
@@ -235,7 +229,7 @@ export class LoadingControl implements BaseElement {
       const currentTime = this.video.el.currentTime;
       const hasMediaError = !!this.video.el.error;
       const isStuck = this.isPlayed && lastPostion === currentTime;
-      const isStuckTooLong = this.isPlayed && lastStuckTime !== -1 && lastStuckTime + 2 * 60 * 1000 < (new Date).getTime(); // 卡住时间超过2分钟默认网络出错
+      const isStuckTooLong = this.isPlayed && lastStuckTime !== -1 && lastStuckTime + 2 * 60 * 1000 < new Date().getTime(); // 卡住时间超过2分钟默认网络出错
       const isNeedLoading = isStuck && !isStuckTooLong && !hasMediaError;
 
       if (isPlaying) {
@@ -248,39 +242,42 @@ export class LoadingControl implements BaseElement {
         }
 
         if (isStuck && lastStuckTime === -1) {
-          lastStuckTime = (new Date).getTime();
+          lastStuckTime = new Date().getTime();
         }
       } else {
         if (
           (this.video.el.readyState === ReadyState.HAVE_METADATA || this.video.el.readyState === ReadyState.HAVE_CURRENT_DATA) &&
-          this.video.el.networkState === NetworkState.NETWORK_LOADING) {
-          if (lastStuckTime === -1) lastStuckTime = (new Date).getTime();
+          this.video.el.networkState === NetworkState.NETWORK_LOADING
+        ) {
+          if (lastStuckTime === -1) lastStuckTime = new Date().getTime();
         } else {
           lastStuckTime = -1;
         }
       }
 
       if (isNeedLoading) {
-        this.el.style.display = 'block';
+        this.el.style.display = "block";
       } else {
-        this.el.style.display = 'none';
+        this.el.style.display = "none";
       }
 
       if (hasMediaError && !mediaErrorFired) {
-        this.eventSource.next(new PlayerEvent('error', this.video.el.error.code));
-        this.video.el.pause();
-        mediaErrorFired = true;
+        if (this.video.el && this.video.el.error) {
+          this.eventSource.next(new PlayerEvent("error", this.video.el.error.code));
+          this.video.el.pause();
+          mediaErrorFired = true;
+        }
       }
 
       if (isStuckTooLong) {
-        this.eventSource.next(new PlayerEvent('error', MediaError.MEDIA_ERR_NETWORK));
+        this.eventSource.next(new PlayerEvent("error", MediaError.MEDIA_ERR_NETWORK));
         this.video.el.pause();
       }
     }, 500);
   }
 
   render() {
-    if (this.rendered) throw new Error('loading control already rendered');
+    if (this.rendered) throw new Error("loading control already rendered");
 
     this.container.el.appendChild(this.el);
 
@@ -288,7 +285,7 @@ export class LoadingControl implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('loading control haven\'t render');
+    if (!this.rendered) throw new Error("loading control haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -310,7 +307,7 @@ export class PlayPauseBtnControl implements BaseElement {
   private container: BaseElement;
   private playBtnEl: HTMLElement;
   private pauseBtnEl: HTMLElement;
-  private rendered: boolean;
+  private rendered = false;
   private event$: Observable<PlayerEvent>;
   private eventSub: Subscription;
 
@@ -322,23 +319,19 @@ export class PlayPauseBtnControl implements BaseElement {
     this.playBtnEl = this.el.childNodes.item(0) as HTMLElement;
     this.pauseBtnEl = this.el.childNodes.item(1) as HTMLElement;
     this.video = video;
-    this.bindEvent();
-  }
-
-  private bindEvent() {
-    this.el.addEventListener('click', () => {
+    this.el.addEventListener("click", () => {
       if (!this.video.el) return;
-        this.resetBtn(!this.video.el.paused);
-        this.toggle();
+      this.resetBtn(!this.video.el.paused);
+      this.toggle();
     });
 
-    this.eventSub = this.event$.subscribe(e => {
+    this.eventSub = this.event$.subscribe((e) => {
       switch (e.type) {
-        case 'ended':
-        case 'pause':
+        case "ended":
+        case "pause":
           this.resetBtn(false);
           break;
-        case 'playing':
+        case "playing":
           this.resetBtn(true);
           break;
       }
@@ -357,16 +350,16 @@ export class PlayPauseBtnControl implements BaseElement {
 
   private resetBtn(isPlaying: boolean) {
     if (isPlaying) {
-      this.playBtnEl.style.display = 'none';
-      this.pauseBtnEl.style.display = 'block';
+      this.playBtnEl.style.display = "none";
+      this.pauseBtnEl.style.display = "block";
     } else {
-      this.pauseBtnEl.style.display = 'none';
-      this.playBtnEl.style.display = 'block';
+      this.pauseBtnEl.style.display = "none";
+      this.playBtnEl.style.display = "block";
     }
   }
 
   render() {
-    if (this.rendered) throw new Error('play btn already rendered');
+    if (this.rendered) throw new Error("play btn already rendered");
 
     this.container.el.appendChild(this.el);
 
@@ -374,7 +367,7 @@ export class PlayPauseBtnControl implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('play btn haven\'t render');
+    if (!this.rendered) throw new Error("play btn haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -401,7 +394,7 @@ export class ProgressBarControl implements BaseElement {
   private bufferedEl: HTMLElement;
   private fillEl: HTMLElement;
   private cursorEl: HTMLElement;
-  private rendered: boolean;
+  private rendered = false;
   private mouseDownOrigin = 0;
   private cursorOrigin = 0;
   private isMouseDown = false;
@@ -422,12 +415,9 @@ export class ProgressBarControl implements BaseElement {
     this.cursorEl = this.backgroundEl.childNodes.item(2) as HTMLElement;
     this.video = video;
     this.event$ = event$;
-    this.bindEvent();
-  }
 
-  private bindEvent() {
     if (HAS_MOUSE_EVENT && !IS_IOS && !IS_ANDROID) {
-      this.el.addEventListener('mousedown', (e) => {
+      this.el.addEventListener("mousedown", (e) => {
         if (e.target === this.backgroundEl) {
           this.backgroundDown(e);
         } else if (e.target === this.cursorEl) {
@@ -435,45 +425,45 @@ export class ProgressBarControl implements BaseElement {
         }
       });
     } else {
-      this.el.addEventListener('touchstart', (e) => {
+      this.el.addEventListener("touchstart", (e) => {
         this.backgroundDown(e);
         this.cursorDown(e);
       });
 
-      this.el.addEventListener('touchmove', this.progressBarMousemoveHandler, false);
-      this.el.addEventListener('touchend', this.progressBarMouseupHandler, false);
+      this.el.addEventListener("touchmove", this.progressBarMousemoveHandler, false);
+      this.el.addEventListener("touchend", this.progressBarMouseupHandler, false);
     }
 
-    this.eventSub = this.event$.subscribe(e => {
+    this.eventSub = this.event$.subscribe((e) => {
       switch (e.type) {
-        case 'progress':
+        case "progress":
           this.resetBuffered();
           break;
-        case 'timeupdate':
+        case "timeupdate":
           if (!this.seeking) {
             const currentTime = this.video.el ? this.video.el.currentTime : 0;
             const duration = this.video.el ? this.video.el.duration : 0;
             this.resetCursor(currentTime / duration);
           }
           break;
-        case 'seeking':
+        case "seeking":
           this.seeking = true;
           break;
-        case 'seeked':
+        case "seeked":
           clearTimeout(this.seekingTimer);
           if (IS_IOS) {
-            this.seekingTimer = setTimeout(() => this.seeking = false, 2000); // prevent ios seeking delay
+            this.seekingTimer = setTimeout(() => (this.seeking = false), 2000); // prevent ios seeking delay
           } else {
             this.seeking = false;
           }
           break;
-        case 'ended':
+        case "ended":
           this.resetCursor(0);
           break;
-        case 'reset':
+        case "reset":
           this.resetProgressBar();
           break;
-        case 'ready':
+        case "ready":
           const currentSrc = this.video.srcArray[this.video.currentIndex];
 
           if (currentSrc instanceof SourceOption && isRtmp(currentSrc)) {
@@ -486,11 +476,11 @@ export class ProgressBarControl implements BaseElement {
   }
 
   private show() {
-    this.el.style.visibility = '';
+    this.el.style.visibility = "";
   }
 
   private hide() {
-    this.el.style.visibility = 'hidden';
+    this.el.style.visibility = "hidden";
   }
 
   private resetProgressBar() {
@@ -509,7 +499,7 @@ export class ProgressBarControl implements BaseElement {
       // this.bufferedEl.style.left = `${start / duration * 100}%`;
 
       const end = this.video.el.buffered.end(lastBufferIndex);
-      this.bufferedEl.style.width = `${end / duration * 100}%`;
+      this.bufferedEl.style.width = `${(end / duration) * 100}%`;
     }
   }
 
@@ -534,7 +524,7 @@ export class ProgressBarControl implements BaseElement {
     if (!this.video.el) return;
 
     const target = getTouchTarget(e as TouchEvent);
-    this.mouseDownOrigin = (e instanceof MouseEvent) ? (e as MouseEvent).x : (target ? target.pageX : 0);
+    this.mouseDownOrigin = e instanceof MouseEvent ? (e as MouseEvent).x : target ? target.pageX : 0;
     this.cursorOrigin = this.cursorEl.offsetLeft;
     this.isMouseDown = true;
   }
@@ -544,7 +534,7 @@ export class ProgressBarControl implements BaseElement {
 
     const target = getTouchTarget(e as TouchEvent);
     if (this.isMouseDown) {
-      const mouseX = (e instanceof MouseEvent) ? (e as MouseEvent).x : (target ? target.pageX : 0);
+      const mouseX = e instanceof MouseEvent ? (e as MouseEvent).x : target ? target.pageX : 0;
       const percent = this.caclulateOffsetX(mouseX);
       this.resetCursor(percent);
       this.seeking = true;
@@ -554,7 +544,7 @@ export class ProgressBarControl implements BaseElement {
   private cursorUp(e: TouchEvent | MouseEvent) {
     const target = getTouchTarget(e as TouchEvent);
     if (this.isMouseDown) {
-      const mouseX = (e instanceof MouseEvent) ? (e as MouseEvent).x : (target ? target.pageX : 0);
+      const mouseX = e instanceof MouseEvent ? (e as MouseEvent).x : target ? target.pageX : 0;
       const percent = this.caclulateOffsetX(mouseX);
       this.resetCurrentTime(percent);
       this.isMouseDown = false;
@@ -587,24 +577,24 @@ export class ProgressBarControl implements BaseElement {
   }
 
   render() {
-    if (this.rendered) throw new Error('progress bar already rendered');
+    if (this.rendered) throw new Error("progress bar already rendered");
 
     this.container.el.appendChild(this.el);
     if (HAS_MOUSE_EVENT && !IS_IOS && !IS_ANDROID) {
-      window.addEventListener('mousemove', this.progressBarMousemoveHandler, false);
-      window.addEventListener('mouseup', this.progressBarMouseupHandler, false);
+      window.addEventListener("mousemove", this.progressBarMousemoveHandler, false);
+      window.addEventListener("mouseup", this.progressBarMouseupHandler, false);
     }
 
     this.rendered = true;
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('progress bar haven\'t render');
+    if (!this.rendered) throw new Error("progress bar haven't render");
 
     this.el.remove();
     if (HAS_MOUSE_EVENT && !IS_IOS && !IS_ANDROID) {
-      window.removeEventListener('mousemove', this.progressBarMousemoveHandler, false);
-      window.removeEventListener('mouseup', this.progressBarMouseupHandler, false);
+      window.removeEventListener("mousemove", this.progressBarMousemoveHandler, false);
+      window.removeEventListener("mouseup", this.progressBarMouseupHandler, false);
     }
     if (this.eventSub) this.eventSub.unsubscribe();
 
@@ -622,9 +612,9 @@ export class CurrentTimeControl implements BaseElement {
   private video: VideoPlayer;
   private event$: Observable<PlayerEvent>;
   private eventSub: Subscription;
-  private rendered: boolean;
+  private rendered = false;
   private defaultWidth = 40;
-  private currentTime = '';
+  private currentTime = "";
 
   constructor(container: BaseElement, video: VideoPlayer, event$: Observable<PlayerEvent>) {
     this.container = container;
@@ -632,19 +622,17 @@ export class CurrentTimeControl implements BaseElement {
     this.event$ = event$;
     const elements = createElementByString(currentTimeTemplate);
     this.el = elements.item(0) as HTMLElement;
-    this.bindEvent();
-  }
-
-  private bindEvent() {
-    this.eventSub = this.event$.subscribe(e => {
+    this.eventSub = this.event$.subscribe((e) => {
       switch (e.type) {
-        case 'timeupdate':
+        case "timeupdate":
           this.resetCurrentTime(this.video.el ? this.video.el.currentTime : 0);
           break;
-        case 'ended':
-          this.video.el.currentTime = 0;
+        case "ended":
+          if (this.video.el) {
+            this.video.el.currentTime = 0;
+          }
           break;
-        case 'ready':
+        case "ready":
           const currentSrc = this.video.srcArray[this.video.currentIndex];
 
           if (currentSrc instanceof SourceOption && isRtmp(currentSrc)) {
@@ -660,24 +648,24 @@ export class CurrentTimeControl implements BaseElement {
   }
 
   private show() {
-    this.el.style.visibility = '';
+    this.el.style.visibility = "";
   }
 
   private hide() {
-    this.el.style.visibility = 'hidden';
+    this.el.style.visibility = "hidden";
   }
 
   private resetCurrentTime(currentTime: number) {
     const time = secondToMMSS(currentTime);
     if (time !== this.currentTime) {
       this.currentTime = time;
-      this.el.style.width = this.currentTime.length >= 8 ? `${(this.currentTime.length - 5) * 8 + this.defaultWidth}px` : '';
+      this.el.style.width = this.currentTime.length >= 8 ? `${(this.currentTime.length - 5) * 8 + this.defaultWidth}px` : "";
       this.el.innerText = `${this.currentTime}`;
     }
   }
 
   render() {
-    if (this.rendered) throw new Error('current time already rendered');
+    if (this.rendered) throw new Error("current time already rendered");
 
     this.container.el.appendChild(this.el);
 
@@ -685,7 +673,7 @@ export class CurrentTimeControl implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('current time haven\'t render');
+    if (!this.rendered) throw new Error("current time haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -702,9 +690,9 @@ export class DurationControl implements BaseElement {
   el: HTMLElement;
   private container: BaseElement;
   private video: VideoPlayer;
-  private rendered: boolean;
+  private rendered = false;
   private defaultWidth = 40;
-  private duration = '';
+  private duration = "";
   private event$: Observable<PlayerEvent>;
   private eventSub: Subscription;
 
@@ -714,17 +702,15 @@ export class DurationControl implements BaseElement {
     this.event$ = event$;
     const elements = createElementByString(durationTemplate);
     this.el = elements.item(0) as HTMLElement;
-    this.bindEvent();
-  }
-
-  private bindEvent() {
-    this.eventSub = this.event$.subscribe(e => {
+    this.eventSub = this.event$.subscribe((e) => {
       switch (e.type) {
-        case 'loadedmetadata':
-        case 'durationchange':
-          this.resetDuration(this.video.el.duration);
+        case "loadedmetadata":
+        case "durationchange":
+          if (this.video.el) {
+            this.resetDuration(this.video.el.duration);
+          }
           break;
-        case 'ready':
+        case "ready":
           const currentSrc = this.video.srcArray[this.video.currentIndex];
 
           if (currentSrc instanceof SourceOption && isRtmp(currentSrc)) {
@@ -740,21 +726,21 @@ export class DurationControl implements BaseElement {
   }
 
   private show() {
-    this.el.style.visibility = '';
+    this.el.style.visibility = "";
   }
 
   private hide() {
-    this.el.style.visibility = 'hidden';
+    this.el.style.visibility = "hidden";
   }
 
   private resetDuration(duration: number) {
     this.duration = secondToMMSS(duration);
-    this.el.style.width = this.duration.length >= 8 ? `${(this.duration.length - 5) * 8 + this.defaultWidth}px` : '';
+    this.el.style.width = this.duration.length >= 8 ? `${(this.duration.length - 5) * 8 + this.defaultWidth}px` : "";
     this.el.innerText = `${this.duration}`;
   }
 
   render() {
-    if (this.rendered) throw new Error('duration already rendered');
+    if (this.rendered) throw new Error("duration already rendered");
 
     this.container.el.appendChild(this.el);
 
@@ -762,7 +748,7 @@ export class DurationControl implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('duration haven\'t render');
+    if (!this.rendered) throw new Error("duration haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -777,7 +763,7 @@ const volumeTemplate = `
       <div class="${styles.volumeOnBtn} ${styles.toolBarBtn}"><svg viewBox="0 0 19 18" xmlns="http://www.w3.org/2000/svg"><path d="M12.128.063c-.205-.102-.448-.08-.63.058l-6.7 5.058H1.054C.474 5.178 0 5.65 0 6.233v5.458c0 .583.473 1.056 1.054 1.056h3.744l6.7 5.057c.107.08.234.12.362.12.09 0 .183-.02.268-.062.203-.1.332-.31.332-.536V.6c0-.227-.13-.435-.332-.537zm-1.288 15.46L5.433 11.44c-.096-.07-.212-.11-.33-.11H1.62V6.594h3.482c.12 0 .235-.04.33-.11L10.84 2.4v13.12zm4.106-9.6c-.386 0-.7.27-.7.6V11.4c0 .33.314.6.7.6.387 0 .7-.27.7-.6V6.524c0-.332-.313-.6-.7-.6zm2.925-2.398c-.386 0-.7.268-.7.6V13.8c0 .33.314.6.7.6.387 0 .7-.27.7-.6V4.124c0-.332-.313-.6-.7-.6z" fill-rule="nonzero"/></svg></div>
       <div class="${styles.volumeOffBtn} ${styles.toolBarBtn}"><svg viewBox="0 0 23 18" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M12.215.1c-.204-.1-.448-.078-.63.06l-6.7 5.056H1.142C.56 5.216.087 5.69.087 6.27v5.46c0 .58.473 1.054 1.055 1.054h3.743l6.7 5.057c.107.08.234.122.362.122.092 0 .183-.02.268-.063.203-.103.332-.31.332-.538V.638c0-.227-.13-.435-.332-.537zm-1.288 15.46L5.52 11.48c-.095-.073-.212-.112-.33-.112H1.706V6.632H5.19c.12 0 .235-.04.33-.11l5.407-4.082v13.12z" fill-rule="nonzero"/><path d="M15.224 5.224c.268-.27.672-.3.903-.07l6.72 6.72c.23.23.198.634-.07.902-.27.27-.673.3-.903.07l-6.72-6.72c-.23-.23-.2-.634.07-.902z"/><path d="M22.776 5.224c-.268-.27-.672-.3-.903-.07l-6.72 6.72c-.23.23-.198.634.07.902.27.27.673.3.903.07l6.72-6.72c.23-.23.2-.634-.07-.902z"/></g></svg></div>
     </div>
-    <div class="${styles.volumeConditioner} ${styles.volumeConditionerShown} ${styles.volumeConditionerHidden}">
+    <div class="${styles.volumeConditioner}">
       <div class="${styles.volumeBackground}"></div>
       <div class="${styles.volumeFill}"></div>
       <div class="${styles.volumeCursor}"></div>
@@ -794,7 +780,7 @@ export class VolumeControl implements BaseElement {
   private volumeCursorEl: HTMLElement;
   private container: BaseElement;
   private video: VideoPlayer;
-  private rendered: boolean;
+  private rendered = false;
   private volumeCache = 1;
   private volumeConditionerOffset = 12;
   private volumeConditionerHeight = 75;
@@ -819,29 +805,29 @@ export class VolumeControl implements BaseElement {
     this.volumeFillEl = this.el.childNodes.item(1).childNodes.item(1) as HTMLElement;
     this.volumeCursorEl = this.el.childNodes.item(1).childNodes.item(2) as HTMLElement;
 
-    this.bindEvent();
-  }
-
-  private bindEvent() {
-    this.eventSub = this.event$.subscribe(e => {
-      if (e.type === 'volumechange') {
-        this.setConditioner(this.video.el.volume);
-        this.setVolumeIcon(this.video.el.volume);
-      } else if (e.type === 'ready') {
+    this.eventSub = this.event$.subscribe((e) => {
+      if (e.type === "volumechange") {
+        if (this.video.el) {
+          this.setConditioner(this.video.el.volume);
+          this.setVolumeIcon(this.video.el.volume);
+        }
+      } else if (e.type === "ready") {
         this.initVolumeControls();
       }
     });
 
-    this.volumeOnBtnEl.addEventListener('click', () => this.toggle());
-    this.volumeOffBtnEl.addEventListener('click', () => this.toggle());
-    this.volumeBackgroundEl.addEventListener('mousedown', (e) => this.BackgoundClick(e));
-    this.volumeCursorEl.addEventListener('mousedown', (e) => this.cursorDown(e));
+    this.volumeOnBtnEl.addEventListener("click", () => this.toggle());
+    this.volumeOffBtnEl.addEventListener("click", () => this.toggle());
+    this.volumeBackgroundEl.addEventListener("mousedown", (e) => this.BackgoundClick(e));
+    this.volumeCursorEl.addEventListener("mousedown", (e) => this.cursorDown(e));
   }
 
   private initVolumeControls() {
-    this.volumeCache = this.video.el.volume;
-    this.setConditioner(this.video.el.volume);
-    this.setVolumeIcon(this.video.el.volume);
+    if (this.video.el) {
+      this.volumeCache = this.video.el.volume;
+      this.setConditioner(this.video.el.volume);
+      this.setVolumeIcon(this.video.el.volume);
+    }
   }
 
   private BackgoundClick(e: MouseEvent) {
@@ -849,7 +835,7 @@ export class VolumeControl implements BaseElement {
 
     const percent = (this.volumeConditionerHeight - e.offsetY) / this.volumeConditionerHeight;
     this.setConditioner(percent);
-    this.setVolume(percent)
+    this.setVolume(percent);
   }
 
   private cursorDown(e: MouseEvent) {
@@ -858,8 +844,8 @@ export class VolumeControl implements BaseElement {
     this.mouseDownOrigin = e.y;
     this.cursorOrigin = this.volumeCursorEl.offsetTop;
     this.isVolumeConditionerCursorDown = true;
-    this.volumeCursorEl.style.transition = 'none';
-    this.volumeFillEl.style.transition = 'none';
+    this.volumeCursorEl.style.transition = "none";
+    this.volumeFillEl.style.transition = "none";
   }
 
   private cursorMove(e: MouseEvent) {
@@ -878,8 +864,8 @@ export class VolumeControl implements BaseElement {
 
   private cursorUp(e: MouseEvent) {
     this.isVolumeConditionerCursorDown = false;
-    this.volumeCursorEl.style.transition = '';
-    this.volumeFillEl.style.transition = '';
+    this.volumeCursorEl.style.transition = "";
+    this.volumeFillEl.style.transition = "";
   }
 
   private toggle() {
@@ -897,11 +883,11 @@ export class VolumeControl implements BaseElement {
     percent = parsePercent(percent);
 
     if (percent) {
-      this.volumeOnBtnEl.style.display = 'block';
-      this.volumeOffBtnEl.style.display = 'none';
+      this.volumeOnBtnEl.style.display = "block";
+      this.volumeOffBtnEl.style.display = "none";
     } else {
-      this.volumeOnBtnEl.style.display = 'none';
-      this.volumeOffBtnEl.style.display = 'block';
+      this.volumeOnBtnEl.style.display = "none";
+      this.volumeOffBtnEl.style.display = "block";
     }
   }
 
@@ -913,27 +899,29 @@ export class VolumeControl implements BaseElement {
   }
 
   private setVolume(percent: number) {
-    percent = parsePercent(percent);
+    if (this.video.el) {
+      percent = parsePercent(percent);
 
-    this.video.el.volume = percent;
+      this.video.el.volume = percent;
+    }
   }
 
   render() {
-    if (this.rendered) throw new Error('volume already rendered');
+    if (this.rendered) throw new Error("volume already rendered");
 
     this.container.el.appendChild(this.el);
-    document.addEventListener('mousemove', this.volumeMousemoveHandler, false);
-    document.addEventListener('mouseup', this.volumeMouseupHandler, false);
+    document.addEventListener("mousemove", this.volumeMousemoveHandler, false);
+    document.addEventListener("mouseup", this.volumeMouseupHandler, false);
 
     this.rendered = true;
   }
 
   destroy() {
-    if (this.rendered) throw new Error('volume haven\'t render');
+    if (this.rendered) throw new Error("volume haven't render");
 
     this.el.remove();
-    document.removeEventListener('mousemove', this.volumeMousemoveHandler, false);
-    document.removeEventListener('mouseup', this.volumeMouseupHandler, false);
+    document.removeEventListener("mousemove", this.volumeMousemoveHandler, false);
+    document.removeEventListener("mouseup", this.volumeMouseupHandler, false);
     if (this.eventSub) this.eventSub.unsubscribe();
 
     this.rendered = false;
@@ -959,7 +947,7 @@ export class QualityControl implements BaseElement {
   private opt: Option;
   private video: VideoPlayer;
   private lang: Language;
-  private rendered: boolean;
+  private rendered = false;
   private event$: Observable<PlayerEvent>;
   private eventSub: Subscription;
 
@@ -975,33 +963,7 @@ export class QualityControl implements BaseElement {
     this.event$ = event$;
 
     this.resetQualityControl(this.video.srcArray, this.video.currentIndex);
-    this.bindEvent();
-  }
 
-  private resetQualityControl(srcArray: (SourceOption | MediaSource)[], currentIndex: number) {
-    const currentSrc = srcArray[currentIndex];
-    if (IS_SUPPORT_MSE && currentSrc instanceof MediaSource) {
-      this.qualityBtnEl.innerText = this.lang.translate('unknown quality');
-    } else if (currentSrc instanceof SourceOption) {
-      this.qualityBtnEl.innerText = currentSrc.quality;
-    }
-
-    this.qualityConditionerEl.innerHTML = '';
-    for (let index in srcArray) {
-      const item = srcArray[index];
-      const rowTemplate = createElementByString(qualityRowTemplate).item(0) as HTMLElement;
-      const row = rowTemplate.cloneNode() as HTMLElement;
-      if (IS_SUPPORT_MSE && item instanceof MediaSource) {
-        row.innerText = this.lang.translate('unknown quality');
-      } else if (item instanceof SourceOption) {
-        row.innerText = item.quality;
-      }
-      if (+index === currentIndex) row.className += ' activate';
-      this.qualityConditionerEl.appendChild(row);
-    }
-  }
-
-  private bindEvent() {
     // bind source change
     this.eventSub = this.event$.subscribe((e: PlayerEvent) => {
       if (e.type === PlayerEventType.SourceChange) {
@@ -1009,14 +971,41 @@ export class QualityControl implements BaseElement {
         this.resetQualityControl(data.srcArray, data.currentIndex);
       }
     });
-    this.qualityConditionerEl.addEventListener('click', (e) => {
-      const index = (<any>Array).prototype.slice.call(this.qualityConditionerEl.childNodes).indexOf(e.target);
-      this.video.switchSrc(index);
-    }, false);
+    this.qualityConditionerEl.addEventListener(
+      "click",
+      (e) => {
+        const index = (<any>Array).prototype.slice.call(this.qualityConditionerEl.childNodes).indexOf(e.target);
+        this.video.switchSrc(index);
+      },
+      false
+    );
+  }
+
+  private resetQualityControl(srcArray: (SourceOption | MediaSource)[], currentIndex: number) {
+    const currentSrc = srcArray[currentIndex];
+    if (IS_SUPPORT_MSE && currentSrc instanceof MediaSource) {
+      this.qualityBtnEl.innerText = this.lang.translate("unknown quality");
+    } else if (currentSrc instanceof SourceOption) {
+      this.qualityBtnEl.innerText = currentSrc.quality;
+    }
+
+    this.qualityConditionerEl.innerHTML = "";
+    for (let index in srcArray) {
+      const item = srcArray[index];
+      const rowTemplate = createElementByString(qualityRowTemplate).item(0) as HTMLElement;
+      const row = rowTemplate.cloneNode() as HTMLElement;
+      if (IS_SUPPORT_MSE && item instanceof MediaSource) {
+        row.innerText = this.lang.translate("unknown quality");
+      } else if (item instanceof SourceOption) {
+        row.innerText = item.quality;
+      }
+      if (+index === currentIndex) row.className += " activate";
+      this.qualityConditionerEl.appendChild(row);
+    }
   }
 
   render() {
-    if (this.rendered) throw new Error('quality already rendered');
+    if (this.rendered) throw new Error("quality already rendered");
 
     this.container.el.appendChild(this.el);
 
@@ -1024,7 +1013,7 @@ export class QualityControl implements BaseElement {
   }
 
   destroy() {
-    if (this.rendered) throw new Error('quality haven\'t render');
+    if (this.rendered) throw new Error("quality haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -1042,13 +1031,13 @@ const fullScreenTemplate = `
 
 export class FullScreenControl implements BaseElement {
   el: HTMLElement;
-  fullScreenApi: FullScreenApi;
+  fullScreenApi?: FullScreenApi;
   private container: BaseElement;
   private enterFullscreenBtnEl: HTMLElement;
   private exitFullscreenBtnEl: HTMLElement;
   private video: VideoPlayer;
   private player: ZaojiuPlayer;
-  private rendered: boolean;
+  private rendered = false;
   private event$: Observable<PlayerEvent>;
   private eventSub: Subscription;
 
@@ -1061,18 +1050,52 @@ export class FullScreenControl implements BaseElement {
     this.el = elements.item(0) as HTMLElement;
     this.enterFullscreenBtnEl = this.el.childNodes.item(0) as HTMLElement;
     this.exitFullscreenBtnEl = this.el.childNodes.item(1) as HTMLElement;
-    this.bindEvent();
+
+    this.el.addEventListener("click", () => this.toggle());
+    this.eventSub = this.event$
+      .filter((e) => e.type === "ready")
+      .subscribe((e) => {
+        this.prepareFullScreenApi();
+      });
   }
 
   private prepareFullScreenApi() {
     const fullScreenApiList = [
-      ['requestFullscreen', 'exitFullscreen', 'fullscreenElement', 'fullscreenEnabled', 'fullscreenchange', 'fullscreenerror'],
-      ['webkitRequestFullscreen', 'webkitExitFullscreen', 'webkitFullscreenElement', 'webkitFullscreenEnabled', 'webkitfullscreenchange', 'webkitfullscreenerror'],
-      ['webkitRequestFullScreen', 'webkitCancelFullScreen', 'webkitFullScreenElement', 'webkitCancelFullScreen', 'webkitfullscreenchange', 'webkitfullscreenerror'],
-      ['mozRequestFullScreen', 'mozCancelFullScreen', 'mozFullScreenElement', 'mozFullScreenEnabled', 'mozfullscreenchange', 'mozfullscreenerror'],
-      ['msRequestFullscreen', 'msExitFullscreen', 'msFullscreenElement', 'msFullscreenEnabled', 'MSFullscreenChange', 'MSFullscreenError'],
-      ['webkitEnterFullscreen', 'webkitExitFullscreen', 'webkitDisplayingFullscreen', 'webkitSupportsFullscreen', 'webkitbeginfullscreen', 'webkitfullscreenerror'],
-      ['webkitEnterFullScreen', 'webkitExitFullScreen', 'webkitDisplayingFullscreen', 'webkitSupportsFullscreen', 'webkitbeginfullscreen', 'webkitfullscreenerror'],
+      ["requestFullscreen", "exitFullscreen", "fullscreenElement", "fullscreenEnabled", "fullscreenchange", "fullscreenerror"],
+      [
+        "webkitRequestFullscreen",
+        "webkitExitFullscreen",
+        "webkitFullscreenElement",
+        "webkitFullscreenEnabled",
+        "webkitfullscreenchange",
+        "webkitfullscreenerror",
+      ],
+      [
+        "webkitRequestFullScreen",
+        "webkitCancelFullScreen",
+        "webkitFullScreenElement",
+        "webkitCancelFullScreen",
+        "webkitfullscreenchange",
+        "webkitfullscreenerror",
+      ],
+      ["mozRequestFullScreen", "mozCancelFullScreen", "mozFullScreenElement", "mozFullScreenEnabled", "mozfullscreenchange", "mozfullscreenerror"],
+      ["msRequestFullscreen", "msExitFullscreen", "msFullscreenElement", "msFullscreenEnabled", "MSFullscreenChange", "MSFullscreenError"],
+      [
+        "webkitEnterFullscreen",
+        "webkitExitFullscreen",
+        "webkitDisplayingFullscreen",
+        "webkitSupportsFullscreen",
+        "webkitbeginfullscreen",
+        "webkitfullscreenerror",
+      ],
+      [
+        "webkitEnterFullScreen",
+        "webkitExitFullScreen",
+        "webkitDisplayingFullscreen",
+        "webkitSupportsFullscreen",
+        "webkitbeginfullscreen",
+        "webkitfullscreenerror",
+      ],
     ];
 
     for (let item of fullScreenApiList) {
@@ -1089,59 +1112,59 @@ export class FullScreenControl implements BaseElement {
         fullscreenEnabled in document &&
         `on${fullscreenchange}` in document
       ) {
-        this.fullScreenApi = new FullScreenApi;
-        this.fullScreenApi.requestFullscreen = () => {
-          (<any>this.player.el)[requestFullscreen]();
+        this.fullScreenApi = {
+          requestFullscreen: () => {
+            (<any>this.player.el)[requestFullscreen]();
+          },
+          exitFullscreen: () => {
+            (<any>document)[exitFullscreen]();
+          },
+          fullscreenEnabled: (<any>document)[fullscreenEnabled],
+          fullscreenElement: (<any>document)[fullscreenElement],
         };
-        this.fullScreenApi.exitFullscreen = () => {
-          (<any>document)[exitFullscreen]();
-        };
-        this.fullScreenApi.fullscreenEnabled = (<any>document)[fullscreenEnabled];
+
         document.addEventListener(fullscreenchange, (e) => {
-          this.fullScreenApi.fullscreenElement = (<any>document)[fullscreenElement];
+          this.fullScreenApi!.fullscreenElement = (<any>document)[fullscreenElement];
           this.resetBtn();
         });
         break;
       } else if (
+        this.video.el &&
         requestFullscreen in this.video.el &&
         exitFullscreen in this.video.el &&
         fullscreenElement in this.video.el &&
         fullscreenEnabled in this.video.el
       ) {
         const fullScreenListener = () => {
-          this.fullScreenApi.fullscreenElement = (<any>this.video.el)[fullscreenElement];
+          this.fullScreenApi!.fullscreenElement = (<any>this.video.el)[fullscreenElement];
           this.resetBtn();
         };
-        this.fullScreenApi = new FullScreenApi;
-        this.fullScreenApi.requestFullscreen = () => {
-          (<any>this.video.el)[requestFullscreen]();
+        this.fullScreenApi = {
+          requestFullscreen: () => {
+            (<any>this.video.el)[requestFullscreen]();
+          },
+          exitFullscreen: () => {
+            (<any>this.video.el)[exitFullscreen]();
+          },
+          fullscreenEnabled: (<any>this.video.el)[fullscreenEnabled],
+          fullscreenElement: (<any>this.video.el)[fullscreenElement],
         };
-        this.fullScreenApi.exitFullscreen = () => {
-          (<any>this.video.el)[exitFullscreen]();
-        };
-        this.fullScreenApi.fullscreenEnabled = (<any>this.video.el)[fullscreenEnabled];
-        this.video.el.addEventListener('webkitbeginfullscreen', fullScreenListener);
-        this.video.el.addEventListener('webkitendfullscreen', fullScreenListener);
+
+        this.video.el.addEventListener("webkitbeginfullscreen", fullScreenListener);
+        this.video.el.addEventListener("webkitendfullscreen", fullScreenListener);
         break;
       }
     }
   }
 
   private resetBtn() {
-    if (this.fullScreenApi.fullscreenElement) {
-      this.enterFullscreenBtnEl.style.display = 'none';
-      this.exitFullscreenBtnEl.style.display = 'block';
+    if (this.fullScreenApi!.fullscreenElement) {
+      this.enterFullscreenBtnEl.style.display = "none";
+      this.exitFullscreenBtnEl.style.display = "block";
     } else {
-      this.enterFullscreenBtnEl.style.display = 'block';
-      this.exitFullscreenBtnEl.style.display = 'none';
+      this.enterFullscreenBtnEl.style.display = "block";
+      this.exitFullscreenBtnEl.style.display = "none";
     }
-  }
-
-  private bindEvent() {
-    this.el.addEventListener('click', () => this.toggle());
-    this.eventSub = this.event$.filter(e => e.type === 'ready').subscribe(e => {
-      this.prepareFullScreenApi();
-    });
   }
 
   toggle() {
@@ -1155,14 +1178,14 @@ export class FullScreenControl implements BaseElement {
   }
 
   render() {
-    if (this.rendered) throw new Error('fullScreen already rendered');
+    if (this.rendered) throw new Error("fullScreen already rendered");
 
     this.container.el.appendChild(this.el);
     this.rendered = true;
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('fullScreen haven\'t render');
+    if (!this.rendered) throw new Error("fullScreen haven't render");
 
     this.el.remove();
     if (this.eventSub) this.eventSub.unsubscribe();
@@ -1192,7 +1215,7 @@ export class ToolBarControl implements BaseElement {
   private topProgressBarEl: HTMLElement;
   private topProgressBarFillEl: HTMLElement;
   private video: VideoPlayer;
-  private rendered: boolean;
+  private rendered = false;
   private option: Option;
   private event$: Observable<PlayerEvent>;
   private eventSub: Subscription;
@@ -1205,7 +1228,15 @@ export class ToolBarControl implements BaseElement {
     this.el = elements.item(0) as HTMLElement;
     this.topProgressBarEl = this.el.childNodes.item(0) as HTMLElement;
     this.topProgressBarFillEl = this.topProgressBarEl.childNodes.item(0) as HTMLElement;
-    this.bindEvent();
+    this.eventSub = this.event$.subscribe((e) => {
+      if (e.type === "timeupdate") {
+        const currentTime = this.video.el ? this.video.el.currentTime : 0;
+        const duration = this.video.el ? this.video.el.duration : 0;
+        this.resetProgress(currentTime / duration);
+      } else if (e.type === "reset") {
+        this.slideDown();
+      }
+    });
 
     this.playPauseBtn = new PlayPauseBtnControl(this, video, this.event$);
     this.currentTime = new CurrentTimeControl(this, video, this.event$);
@@ -1217,18 +1248,6 @@ export class ToolBarControl implements BaseElement {
     this.option = option;
   }
 
-  private bindEvent() {
-    this.eventSub = this.event$.subscribe(e => {
-      if (e.type === 'timeupdate') {
-        const currentTime = this.video.el ? this.video.el.currentTime : 0;
-        const duration = this.video.el ? this.video.el.duration : 0;
-        this.resetProgress(currentTime / duration);
-      } else if (e.type === 'reset') {
-        this.slideDown();
-      }
-    });
-  }
-
   private resetProgress(percent: number) {
     percent = parsePercent(percent);
 
@@ -1236,19 +1255,19 @@ export class ToolBarControl implements BaseElement {
   }
 
   slideUp() {
-    this.el.style.transform = 'translateY(0)';
-    this.topProgressBarEl.style.transition = 'none';
-    this.topProgressBarEl.style.opacity = '0';
+    this.el.style.transform = "translateY(0)";
+    this.topProgressBarEl.style.transition = "none";
+    this.topProgressBarEl.style.opacity = "0";
   }
 
   slideDown() {
-    this.el.style.transform = 'translateY(100%)';
-    this.topProgressBarEl.style.transition = 'opacity .2s .4s';
-    this.topProgressBarEl.style.opacity = '1';
+    this.el.style.transform = "translateY(100%)";
+    this.topProgressBarEl.style.transition = "opacity .2s .4s";
+    this.topProgressBarEl.style.opacity = "1";
   }
 
   render() {
-    if (this.rendered) throw new Error('toolbar already rendered');
+    if (this.rendered) throw new Error("toolbar already rendered");
 
     if (this.option.controls === true || (this.option.controls instanceof ControlsOption && (this.option.controls as ControlsOption).hasToolBarControls)) {
       this.playPauseBtn.render();
@@ -1264,7 +1283,7 @@ export class ToolBarControl implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('toolbar haven\'t render');
+    if (!this.rendered) throw new Error("toolbar haven't render");
 
     if (this.option.controls === true || (this.option.controls instanceof ControlsOption && (this.option.controls as ControlsOption).hasToolBarControls)) {
       this.playPauseBtn.destroy();
@@ -1295,7 +1314,7 @@ export class Controls implements BaseElement {
   private eventSub: Subscription;
 
   private container: BaseElement;
-  private rendered: boolean;
+  private rendered = false;
 
   constructor(container: BaseElement, option: Option, video: VideoPlayer, player: ZaojiuPlayer, event$: Observable<PlayerEvent>) {
     this.container = container;
@@ -1309,30 +1328,26 @@ export class Controls implements BaseElement {
     this.error = new ErrorControl(this, video, player.language, player.event$, player.eventSource);
     this.toolBar = new ToolBarControl(this, option, video, player);
 
-    this.bindEvent();
-  }
-
-  private bindEvent() {
-    this.el.addEventListener('click', (e) => {
+    this.el.addEventListener("click", (e) => {
       if (e.target === this.el) this.toolBar.playPauseBtn.toggle();
     });
-    this.el.addEventListener('dblclick', (e) => {
+    this.el.addEventListener("dblclick", (e) => {
       if (e.target === this.el) this.toolBar.fullScreen.toggle();
     });
 
-    this.eventSub = this.event$.subscribe(e => {
-      if (e.type === 'reset') {
-        this.el.style.pointerEvents = 'none';
-      } else if (e.type === 'ready' || e.type === 'error') {
-        this.el.style.pointerEvents = 'auto';
+    this.eventSub = this.event$.subscribe((e) => {
+      if (e.type === "reset") {
+        this.el.style.pointerEvents = "none";
+      } else if (e.type === "ready" || e.type === "error") {
+        this.el.style.pointerEvents = "auto";
       }
     });
 
-    this.el.addEventListener('mouseover', () => {
+    this.el.addEventListener("mouseover", () => {
       this.toolBar.slideUp();
       this.resetMouseMoveTimer();
     });
-    this.el.addEventListener('touchstart', () => {
+    this.el.addEventListener("touchstart", () => {
       this.toolBar.slideUp();
       this.resetMouseMoveTimer();
     });
@@ -1346,7 +1361,7 @@ export class Controls implements BaseElement {
   }
 
   render() {
-    if (this.rendered) throw new Error('controls already rendered');
+    if (this.rendered) throw new Error("controls already rendered");
 
     this.bigPlayBtn.render();
     this.loading.render();
@@ -1358,7 +1373,7 @@ export class Controls implements BaseElement {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('controls haven\'t render');
+    if (!this.rendered) throw new Error("controls haven't render");
 
     this.bigPlayBtn.destroy();
     this.loading.destroy();

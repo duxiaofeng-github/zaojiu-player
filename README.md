@@ -1,3 +1,20 @@
+# Zaojiu player
+
+## Install
+
+```
+yarn add zaojiu-player
+```
+
+or
+
+```
+npm i zaojiu-player
+```
+
+## Usage
+
+```typescript
 import { ZaojiuPlayer } from "zaojiu-player";
 import { FlashVideo } from "zaojiu-player/dist/zaojiu-player-flash.plugin";
 
@@ -35,6 +52,12 @@ const player = new ZaojiuPlayer({
   swf: "example/video-js.swf",
 });
 
+// you can control video player by using its instance
 setTimeout(() => {
   player.video.el.pause();
 }, 3000);
+```
+
+## API
+
+You can get its api definitions from [here](./types)

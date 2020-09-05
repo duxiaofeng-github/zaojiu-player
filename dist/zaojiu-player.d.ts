@@ -1,40 +1,5 @@
-import {Subject} from "rxjs/Subject";
-import {Observable} from "rxjs/Observable";
-
-interface FlashVideo {
-  el: FlashElement;
-  error: PlayerError;
-
-  readonly seeking: boolean;
-  readonly duration: number;
-  readonly seekable: FlashTimeRanges;
-  readonly buffered: FlashTimeRanges;
-  readonly ended: boolean;
-  readonly paused: boolean;
-  readonly networkState: NetworkState;
-  readonly readyState: ReadyState;
-  src: SourceOption;
-  currentTime: number;
-  autoplay: boolean;
-  preload: string;
-  loop: boolean;
-  volume: number;
-  muted: boolean;
-  defaultMuted: boolean;
-  playbackRate: number;
-  defaultPlaybackRate: number;
-  poster: string;
-  rtmpConnection: string;
-  rtmpStream: string;
-
-  load(): void;
-  play(): void;
-  pause(): void;
-  canPlayType(type: string): string;
-  addEventListener(type: string, listener?: any, useCapture?: boolean): void;
-  removeEventListener(type: string, listener?: any, useCapture?: boolean): void;
-  remove(): void;
-}
+import { Subject } from "rxjs/Subject";
+import { Observable } from "rxjs/Observable";
 
 interface BigPlayBtnControl {
   el: HTMLElement;
@@ -139,15 +104,7 @@ interface VideoElement {
   addEventListener(type: string, listener?: any, useCapture?: boolean): void;
   removeEventListener(type: string, listener?: any, useCapture?: boolean): void;
 }
-interface FlashElement extends HTMLElement {
-  vjs_getProperty: (prop: any) => any;
-  vjs_setProperty: (prop: any, value: any) => void;
-  vjs_play: () => void;
-  vjs_pause: () => void;
-  vjs_load: () => void;
-  vjs_src: (src: string) => void;
-  instance: FlashVideo;
-}
+
 interface VideoPlayer {
   el: VideoElement;
   containerEl: HTMLElement;
@@ -164,9 +121,12 @@ interface Language {
   dict: {
     [key: string]: string;
   };
-  use(lang: string, dict?: {
-    [key: string]: string;
-  }): void;
+  use(
+    lang: string,
+    dict?: {
+      [key: string]: string;
+    }
+  ): void;
   translate(string: string): string;
 }
 declare enum ReadyState {
@@ -176,7 +136,7 @@ declare enum ReadyState {
   HAVE_FUTURE_DATA = 3,
   HAVE_ENOUGH_DATA = 4,
 }
-declare enum NetworkState {
+export declare enum NetworkState {
   NETWORK_EMPTY = 0,
   NETWORK_IDLE = 1,
   NETWORK_LOADING = 2,
@@ -196,16 +156,6 @@ declare enum VideoErrorType {
   LiveFinish = 5,
   CrossDomainError = 6,
   Others = 7,
-}
-interface FlashBuffer {
-  start: number;
-  end: number;
-}
-interface FlashTimeRanges {
-  buffer: FlashBuffer[];
-  readonly length: number;
-  start(index: number): number;
-  end(index: number): number;
 }
 
 interface FullScreenApi {
@@ -255,7 +205,11 @@ export interface Option {
   swf: string;
 }
 
-export interface ZaojiuPlayerInstance {
+export declare class ZaojiuPlayer {
+  constructor(option: Option | any);
+
+  static use(plugin: any): void;
+
   el: HTMLElement;
   video: VideoPlayer;
   controls: Controls;
@@ -269,8 +223,6 @@ export interface ZaojiuPlayerInstance {
   destroy(): void;
 }
 
-export interface ZaojiuPlayer {
-  new (option: Option | any): ZaojiuPlayerInstance;
-}
 export as namespace ZaojiuPlayer;
+
 export default ZaojiuPlayer;

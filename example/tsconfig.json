@@ -7,6 +7,5 @@
     "module": "esnext",
     "target": "esnext",
     "lib": ["es2016", "dom"]
-  },
-  "include": ["./src"]
+  }
 }

@@ -1,25 +1,52 @@
-import {BaseElement, VideoElement} from './interface';
-import {PlayerEvent, PlayerEventType, Option, SourceOption, VideoSourceChangeEventDetail} from './model';
-import {Observable} from "rxjs/Observable";
-import {Subscription} from "rxjs/Subscription";
-import {Subject} from "rxjs/Subject";
-import 'rxjs/add/operator/first';
-import {createHTMLVideoElement} from "./html";
-import {canPlayTypeByFlash, createElementByString, IS_SUPPORT_FLASH, isRtmp} from "./utils";
-import {ZaojiuPlayer} from "./player";
+import { BaseElement, VideoElement } from "./interface";
+import { PlayerEvent, PlayerEventType, Option, SourceOption, VideoSourceChangeEventDetail } from "./model";
+import { Observable } from "rxjs/Observable";
+import { Subscription } from "rxjs/Subscription";
+import { Subject } from "rxjs/Subject";
+import "rxjs/add/operator/first";
+import { createHTMLVideoElement } from "./html";
+import { canPlayTypeByFlash, createElementByString, IS_SUPPORT_FLASH, isRtmp } from "./utils";
+import { ZaojiuPlayer } from "./player";
 
-const styles = require('./player.scss');
+import * as styles from "../scss/player.scss";
 
-const videoEvents = ['ready', 'abort', 'canplay', 'canplaythrough', 'durationchange', 'emptied', 'encrypted', 'ended', 'interruptbegin', 'interruptend', 'loadeddata', 'loadedmetadata', 'loadstart', 'mozaudioavailable', 'pause', 'play', 'playing', 'progress', 'ratechange', 'seeked', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting'];
+const videoEvents = [
+  "ready",
+  "abort",
+  "canplay",
+  "canplaythrough",
+  "durationchange",
+  "emptied",
+  "encrypted",
+  "ended",
+  "interruptbegin",
+  "interruptend",
+  "loadeddata",
+  "loadedmetadata",
+  "loadstart",
+  "mozaudioavailable",
+  "pause",
+  "play",
+  "playing",
+  "progress",
+  "ratechange",
+  "seeked",
+  "seeking",
+  "stalled",
+  "suspend",
+  "timeupdate",
+  "volumechange",
+  "waiting",
+];
 
 const VideoPlayerTemplate = `
   <div class="${styles.video}"></div>
 `;
 
 export class VideoPlayer {
-  el: VideoElement;
+  el: VideoElement | null = null;
   containerEl: HTMLElement;
-  currentIndex: number;
+  currentIndex = -1;
   srcArray: (SourceOption | MediaSource)[] = [];
   private container: BaseElement;
   private opt: Option;
@@ -27,7 +54,7 @@ export class VideoPlayer {
   private eventSource: Subject<PlayerEvent>;
   private eventSub: Subscription;
   private eventHandler = (e: Event) => this.handleEvent(e);
-  private rendered: boolean;
+  private rendered = false;
 
   constructor(container: BaseElement, opt: Option, eventSource: Subject<PlayerEvent>, event$: Observable<PlayerEvent>) {
     this.container = container;
@@ -35,7 +62,23 @@ export class VideoPlayer {
     this.eventSource = eventSource;
     this.event$ = event$;
     this.containerEl = createElementByString(VideoPlayerTemplate).item(0) as HTMLElement;
-    this.bindEvent();
+    this.eventSub = this.event$
+      .filter((e) => e.type === PlayerEventType.RetryPlay)
+      .subscribe((e) => {
+        if (this.el) {
+          const srcCache = this.el.src;
+          const currentTime = this.el.currentTime;
+          this.el.src = null;
+
+          setTimeout(() => {
+            if (this.el) {
+              this.el.src = srcCache;
+              this.el.currentTime = currentTime;
+              this.el.play();
+            }
+          });
+        }
+      });
   }
 
   setSrc(playList: (SourceOption | MediaSource)[][]) {
@@ -56,12 +99,12 @@ export class VideoPlayer {
     this.setVideoSrc(currentSrc);
   }
 
-  getSrc(): (SourceOption | MediaSource)[] {
+  getSrc(): (SourceOption | MediaSource | null)[] {
     return this.srcArray;
   }
 
   switchSrc(index: number) {
-    if (index < 0 || index > this.srcArray.length - 1) throw new Error('invalid source index');
+    if (index < 0 || index > this.srcArray.length - 1) throw new Error("invalid source index");
 
     this.currentIndex = index;
     const currentSrc = this.srcArray[this.currentIndex];
@@ -70,48 +113,37 @@ export class VideoPlayer {
 
     const currentTimeCache = this.el ? this.el.currentTime : 0;
     this.setVideoSrc(currentSrc);
-    this.event$.filter(e => e.type === 'loadedmetadata').first().subscribe(e => {
-      if (currentSrc instanceof SourceOption && !isRtmp(currentSrc)) this.el.currentTime = currentTimeCache;
-      this.el.play();
-    });
-  }
-
-  private bindEvent() {
-    this.eventSub = this.event$.filter(e => e.type === PlayerEventType.RetryPlay).subscribe(e => {
-      if (!this.el) return;
-
-      const srcCache = this.el.src;
-      const currentTime = this.el.currentTime;
-      this.el.src = null;
-
-      setTimeout(() => {
-        this.el.src = srcCache;
-        this.el.currentTime = currentTime;
-        this.el.play();
+    this.event$
+      .filter((e) => e.type === "loadedmetadata")
+      .first()
+      .subscribe((e) => {
+        if (this.el) {
+          if (currentSrc instanceof SourceOption && !isRtmp(currentSrc)) this.el.currentTime = currentTimeCache;
+          this.el.play();
+        }
       });
-    });
   }
 
-  private setVideoSrc(src: SourceOption | MediaSource) {
+  private setVideoSrc(src: SourceOption | MediaSource | null) {
     if (!src) return;
 
-    const customEvent = new PlayerEvent('reset', src);
+    const customEvent = new PlayerEvent("reset", src);
     this.eventSource.next(customEvent);
 
     this.el = null;
-    this.containerEl.innerHTML = '';
+    this.containerEl.innerHTML = "";
 
     if (src instanceof SourceOption) {
-      if(document.createElement('video').canPlayType(src.minetype)) {
+      if (document.createElement("video").canPlayType(src.minetype)) {
         this.el = createHTMLVideoElement();
         this.onVideoEvent();
         this.el.src = src.src;
       } else if (IS_SUPPORT_FLASH && canPlayTypeByFlash(src.minetype) && ZaojiuPlayer.FlashVideo) {
-        this.el = new ZaojiuPlayer['FlashVideo'](this.opt);
+        this.el = new ZaojiuPlayer["FlashVideo"](this.opt);
         this.onVideoEvent();
-        this.el.src = src;
+        this.el!.src = src;
       } else {
-        const customEvent = new PlayerEvent('error', MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+        const customEvent = new PlayerEvent("error", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
         this.eventSource.next(customEvent);
         console.error(`can not play src: ${src.src}, mimetype: ${src.minetype}.`);
       }
@@ -129,7 +161,7 @@ export class VideoPlayer {
       if (this.el instanceof HTMLVideoElement) {
         this.containerEl.appendChild(this.el as HTMLElement);
         // html video has no ready
-        const event = new CustomEvent('ready', null);
+        const event = new CustomEvent("ready");
         (this.el as HTMLElement).dispatchEvent(event);
       } else {
         this.containerEl.appendChild((this.el as any).el);
@@ -145,25 +177,19 @@ export class VideoPlayer {
     });
   }
 
-  private offVideoEvent() {
-    videoEvents.forEach((eventKey) => {
-      if (this.el) this.el.removeEventListener(eventKey, this.eventHandler);
-    });
-  }
-
   private handleEvent(e: Event) {
     const eventKey = e.type;
-    if (eventKey !== 'error') {
+    if (eventKey !== "error") {
       const detail = e instanceof PlayerEvent ? (e as PlayerEvent).detail : e;
       const customEvent = new PlayerEvent(eventKey, detail);
       this.eventSource.next(customEvent);
-    } else if (this.el.error && this.el.error.code) {
+    } else if (this.el && this.el.error && this.el.error.code) {
       this.eventSource.next(new PlayerEvent(eventKey, this.el.error.code));
     }
   }
 
   render() {
-    if (this.rendered) throw new Error('video already rendered');
+    if (this.rendered) throw new Error("video already rendered");
 
     this.container.el.appendChild(this.containerEl);
 
@@ -171,7 +197,7 @@ export class VideoPlayer {
   }
 
   destroy() {
-    if (!this.rendered) throw new Error('video haven\'t render');
+    if (!this.rendered) throw new Error("video haven't render");
 
     this.containerEl.remove();
 

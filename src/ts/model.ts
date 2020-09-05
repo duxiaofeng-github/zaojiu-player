@@ -1,24 +1,23 @@
-import {parsePlayList} from "./utils";
-import {i18nCN} from "./i18n";
+import { parsePlayList } from "./utils";
+import { i18nCN } from "./i18n";
 
-export class FullScreenApi {
+export interface FullScreenApi {
   requestFullscreen: () => void;
   exitFullscreen: () => void;
   fullscreenElement: HTMLElement;
   fullscreenEnabled: boolean;
 }
 
-
 export enum PlayerEventType {
-  SourceChange = 'sourcechange',
-  RetryPlay = 'retryplay',
+  SourceChange = "sourcechange",
+  RetryPlay = "retryplay",
 }
 
 export class PlayerEvent {
-  type: PlayerEventType|string;
+  type: PlayerEventType | string;
   detail: any;
 
-  constructor(type: PlayerEventType|string, detail: any) {
+  constructor(type: PlayerEventType | string, detail: any) {
     this.type = type;
     this.detail = detail;
   }
@@ -43,7 +42,15 @@ export class ControlsOption {
   showFullScreen = true;
   showQuality = true;
 
-  constructor(showBigPlay = true, showPlayPause = true, showProgressBar = true, showDuration = true, showVolume = true, showQuality = true, showFullScreen = true) {
+  constructor(
+    showBigPlay = true,
+    showPlayPause = true,
+    showProgressBar = true,
+    showDuration = true,
+    showVolume = true,
+    showQuality = true,
+    showFullScreen = true
+  ) {
     this.showBigPlay = showBigPlay;
     this.showPlayPause = showPlayPause;
     this.showProgressBar = showProgressBar;
@@ -54,22 +61,26 @@ export class ControlsOption {
   }
 
   get hasControls(): boolean {
-    return this.showBigPlay ||
+    return (
+      this.showBigPlay ||
       this.showPlayPause ||
       this.showProgressBar ||
       this.showVolume ||
       this.showDuration ||
       this.showQuality ||
-      this.showFullScreen;
+      this.showFullScreen
+    );
   }
 
   get hasToolBarControls(): boolean {
-    return this.showPlayPause ||
+    return (
+      this.showPlayPause ||
       this.showProgressBar ||
       this.showVolume ||
       this.showDuration ||
       this.showQuality ||
-      this.showFullScreen;
+      this.showFullScreen
+    );
   }
 }
 
@@ -89,24 +100,29 @@ export class Option {
   element: string | HTMLElement;
   playList: (SourceOption | MediaSource)[][] = [[]];
   autoplay = false;
-  preload = 'metadata';
+  preload = "metadata";
   loop = false;
   // playsinline = true;
   controls: boolean | ControlsOption = true;
   swf = `video-js.swf`;
 
-  constructor(element: string | HTMLElement,
-              playList: string | MediaSource | SourceOption |
-                (string | MediaSource | SourceOption)[] |
-                (string | SourceOption | MediaSource)[][],
-              autoplay = false,
-              preload = 'metadata',
-              loop = false,
-              // playsinline = true,
-              controls: boolean | ControlsOption = true,
-              swf = `video-js.swf`,
+  constructor(
+    element: string | HTMLElement,
+    playList:
+      | string
+      | MediaSource
+      | SourceOption
+      | (string | MediaSource | SourceOption)[]
+      | (string | SourceOption | MediaSource)[][],
+    autoplay = false,
+    preload = "metadata",
+    loop = false,
+    // playsinline = true,
+    controls: boolean | ControlsOption = true,
+    swf = `video-js.swf`
   ) {
-    if (!element) throw new Error('Must specify an element id or pass a DOMElement');
+    if (!element)
+      throw new Error("Must specify an element id or pass a DOMElement");
     this.element = element;
     this.playList = parsePlayList(playList);
     this.autoplay = autoplay;
@@ -114,16 +130,17 @@ export class Option {
     // this.playsinline = playsinline;
     this.preload = preload;
     this.controls = controls;
+    this.swf = swf;
   }
 }
 
 export const languageDict: { [key: string]: { [key: string]: string } } = {
-  'default': i18nCN,
-  'zh-CN': i18nCN,
+  default: i18nCN,
+  "zh-CN": i18nCN,
 };
 
 export class Language {
-  dict: {[key: string]: string } = languageDict['default'];
+  dict: { [key: string]: string } = languageDict["default"];
 
   constructor(lang: string, dict?: { [key: string]: string }) {
     this.use(lang, dict);
@@ -131,7 +148,7 @@ export class Language {
 
   use(lang: string, dict?: { [key: string]: string }) {
     if (dict) languageDict[lang] = dict;
-    this.dict = languageDict[lang] || languageDict['default'];
+    this.dict = languageDict[lang] || languageDict["default"];
   }
 
   translate(string: string): string {
@@ -196,7 +213,7 @@ export class FlashBuffer {
 export class FlashTimeRanges {
   buffer: FlashBuffer[] = [];
 
-  constructor(buffer: FlashBuffer|FlashBuffer[]) {
+  constructor(buffer: FlashBuffer | FlashBuffer[]) {
     if (buffer instanceof FlashBuffer) {
       this.buffer.push(buffer);
     } else {
