@@ -32,7 +32,7 @@ const player = new ZaojiuPlayer({
   element: "player",
   playList: [srcSD, srcMD, srcHD],
   autoplay: true,
-  swf: "example/video-js.swf",
+  swf: "assets/video-js.swf",
 });
 
 setTimeout(() => {

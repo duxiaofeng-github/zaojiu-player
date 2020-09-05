@@ -4,7 +4,7 @@
   "description": "video player for xingshu co., ltd.",
   "scripts": {
     "dev": "webpack-dev-server",
-    "build": "rm -rf dist && NODE_ENV=production webpack"
+    "build": "rm -rf ../docs && NODE_ENV=production webpack"
   },
   "repository": {
     "type": "git",

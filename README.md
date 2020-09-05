@@ -1,5 +1,13 @@
 # Zaojiu player
 
+A live stream video player, compatible with mobile.
+
+## Feature
+
+- Responsive
+- Quality control by settings
+- Rtmp support by its flash video plugin
+
 ## Install
 
 ```

@@ -65,6 +65,7 @@ example/
 video-js-swf/
 src/
 types/
+docs/
 yarn.lock
 webpack.config.js
 tsconfig.json
