@@ -5,7 +5,7 @@
   "main": "dist/zaojiu-player.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "build": "rm -rf dist && webpack",
+    "build": "rm -rf dist && NODE_ENV=production webpack",
     "example:dev": "webpack-dev-server --config example/webpack.config.js",
     "example:build": "rm -rf example/dist && NODE_ENV=production webpack --config example/webpack.config.js",
     "pub": "npm run build && npm version patch && npm publish"

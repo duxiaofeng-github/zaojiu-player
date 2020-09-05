@@ -5,12 +5,7 @@ module.exports = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
   entry: {
     "zaojiu-player": path.resolve(__dirname, "./src/ts/index.ts"),
-    "zaojiu-player.min": path.resolve(__dirname, "./src/ts/index.ts"),
     "zaojiu-player-flash.plugin": path.resolve(__dirname, "./src/ts/flash.ts"),
-    "zaojiu-player-flash.plugin.min": path.resolve(
-      __dirname,
-      "./src/ts/flash.ts"
-    ),
   },
   output: {
     filename: "[name].js",
@@ -58,10 +53,7 @@ module.exports = {
           to: path.resolve(__dirname, "./dist/zaojiu-player.d.ts"),
         },
         {
-          from: path.resolve(
-            __dirname,
-            "./types/zaojiu-player-flash.plugin.d.ts"
-          ),
+          from: path.resolve(__dirname, "./types/zaojiu-player-flash.plugin.d.ts"),
           to: path.resolve(__dirname, "./dist/zaojiu-player-flash.plugin.d.ts"),
         },
       ],
