@@ -22,6 +22,10 @@ npm i zaojiu-player
 
 ## Usage
 
+```html
+<div id="player" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
+```
+
 ```typescript
 import { ZaojiuPlayer } from "zaojiu-player";
 import { FlashVideo } from "zaojiu-player/dist/zaojiu-player-flash.plugin";
@@ -54,7 +58,7 @@ const srcHD = {
 };
 
 const player = new ZaojiuPlayer({
-  element: "player",
+  element: "player", // html element id
   playList: [srcSD, srcMD, srcHD],
   autoplay: true,
   swf: "static/video-js.swf",
@@ -65,6 +69,8 @@ setTimeout(() => {
   player.video.el.pause();
 }, 3000);
 ```
+
+more detial, see [example](https://github.com/duxiaofeng-github/zaojiu-player/tree/master/example)
 
 ## API
 
